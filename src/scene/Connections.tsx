@@ -141,15 +141,9 @@ export default function Connections() {
 
       {showLabels && (
         <>
-          <SceneLabel position={[1.7, 1.36, 2.25]} tone="neutral">
-            Filter → tank
-          </SceneLabel>
-          <SceneLabel position={[6.15, 0.95, 1.7]} tone="cool">
-            Irrigation main
-          </SceneLabel>
-          <SceneLabel position={[10.0, 1.25, 1.7]} tone="cool">
-            Drip tubes
-          </SceneLabel>
+          <SceneLabel position={[1.7, 1.36, 2.25]} tone="neutral" labelKey="filterToTank" />
+          <SceneLabel position={[6.15, 0.95, 1.7]} tone="cool" labelKey="irrigationMain" />
+          <SceneLabel position={[10.0, 1.25, 1.7]} tone="cool" labelKey="dripTubes" />
         </>
       )}
     </group>

@@ -3,6 +3,7 @@ import { useFrame, type ThreeEvent } from '@react-three/fiber'
 import * as THREE from 'three'
 import { isMotionRunning, motionTime, useExperience } from '../store/useExperience'
 import { COLORS, Plaque, RainSystem, SceneLabel } from './primitives'
+import { getScenePlaque } from '../data/sceneLabels'
 import { LAYOUT } from '../data/layout'
 
 const roofWaterVertex = /* glsl */ `
@@ -98,6 +99,8 @@ function Window({
 }
 
 export default function House() {
+  const language = useExperience((s) => s.language)
+  const plaque = getScenePlaque('house', language)
   const activeChapter = useExperience((s) => s.activeChapter)
   const labelsOn = useExperience((s) => s.labels)
   const selectedPart = useExperience((s) => s.selectedPart)
@@ -289,7 +292,7 @@ export default function House() {
         position={[0.85, 0.42, 1.74]}
         width={1.15}
         height={0.32}
-        lines={['Model home', 'rainwater catchment']}
+        lines={plaque.lines}
       />
 
       <RainSystem center={[-2.9, 3.56, -0.8]} area={[6.4, 5.2]} height={5.4} count={260} active={rainOn} floor={3.52} />
@@ -299,15 +302,9 @@ export default function House() {
 
       {showLabels && (
         <>
-          <SceneLabel position={[0, 4.08, 0.3]} tone="cool">
-            Roof catchment
-          </SceneLabel>
-          <SceneLabel position={[1.45, 3.62, 2.28]} tone="cool">
-            Gutter
-          </SceneLabel>
-          <SceneLabel position={[2.55, 2.15, 2.25]} tone="neutral">
-            Downpipe
-          </SceneLabel>
+          <SceneLabel position={[0, 4.08, 0.3]} tone="cool" labelKey="roofCatchment" />
+          <SceneLabel position={[1.45, 3.62, 2.28]} tone="cool" labelKey="gutter" />
+          <SceneLabel position={[2.55, 2.15, 2.25]} tone="neutral" labelKey="downpipe" />
         </>
       )}
     </group>

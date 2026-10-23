@@ -93,10 +93,9 @@ export default function Pump() {
       <SceneLabel
         position={[1.0, 1.25, 0.6]}
         tone="neutral"
+        labelKey="modelPump"
         visible={labelsOn && (activeChapter === 7 || activeChapter === 8)}
-      >
-        Model pump
-      </SceneLabel>
+      />
     </group>
   )
 }

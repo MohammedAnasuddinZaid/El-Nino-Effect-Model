@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { LAYOUT } from '../data/layout'
 import { isMotionRunning, motionTime, useExperience } from '../store/useExperience'
 import { Plaque, Plant, SceneLabel, damp } from './primitives'
+import { getScenePlaque } from '../data/sceneLabels'
 
 function Dripper({
   x,
@@ -192,12 +193,8 @@ function RootCutaway({ active }: { active: boolean }) {
           <meshStandardMaterial color="#9a855f" metalness={0.38} roughness={0.5} />
         </mesh>
       ))}
-      <SceneLabel position={[0.25, 0.46, 0.7]} tone="cool" visible={labelsOn && (activeChapter === 7 || activeChapter === 8)}>
-        Wetting bulb · illustrative
-      </SceneLabel>
-      <SceneLabel position={[-2.6, 0.78, 0.45]} tone="neutral" visible={labelsOn && activeChapter === 7}>
-        Root-zone cutaway
-      </SceneLabel>
+      <SceneLabel position={[0.25, 0.46, 0.7]} tone="cool" labelKey="wettingBulb" visible={labelsOn && (activeChapter === 7 || activeChapter === 8)} />
+      <SceneLabel position={[-2.6, 0.78, 0.45]} tone="neutral" labelKey="rootZone" visible={labelsOn && activeChapter === 7} />
     </group>
   )
 }
@@ -227,6 +224,8 @@ function DryCracks({ visible }: { visible: boolean }) {
 }
 
 export default function IrrigationField() {
+  const language = useExperience((s) => s.language)
+  const plaque = getScenePlaque('irrigation', language)
   const activeChapter = useExperience((s) => s.activeChapter)
   const labelsOn = useExperience((s) => s.labels)
   const selectPart = useExperience((s) => s.selectPart)
@@ -345,18 +344,14 @@ export default function IrrigationField() {
         position={[2.65, 0.48, 2.36]}
         width={1.0}
         height={0.28}
-        lines={['Demo plot', 'drip irrigation']}
-        small="07 · ROOT ZONE"
+        lines={plaque.lines}
+        small={plaque.small}
       />
 
       {labelsOn && (activeChapter === 7 || activeChapter === 8) && (
         <>
-          <SceneLabel position={[2.45, 1.35, 2.2]} tone="cool">
-            Drip laterals
-          </SceneLabel>
-          <SceneLabel position={[-2.9, 1.3, 1.0]} tone="neutral">
-            Controlled drops
-          </SceneLabel>
+          <SceneLabel position={[2.45, 1.35, 2.2]} tone="cool" labelKey="dripLaterals" />
+          <SceneLabel position={[-2.9, 1.3, 1.0]} tone="neutral" labelKey="controlledDrops" />
         </>
       )}
     </group>

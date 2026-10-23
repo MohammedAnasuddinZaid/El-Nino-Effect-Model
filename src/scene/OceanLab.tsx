@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { Cloud, FlowPipe, Plaque, SceneLabel, WindArrow } from './primitives'
 import { LAYOUT } from '../data/layout'
+import { getScenePlaque } from '../data/sceneLabels'
 import { isMotionRunning, useExperience } from '../store/useExperience'
 import { OceanSurface, OceanVolume } from './OceanWater'
 
@@ -145,6 +146,8 @@ function OceanFloor() {
 }
 
 export default function OceanLab() {
+  const language = useExperience((s) => s.language)
+  const plaque = getScenePlaque('ocean', language)
   const activeChapter = useExperience((s) => s.activeChapter)
   const oceanMode = useExperience((s) => s.oceanMode)
   const selectPart = useExperience((s) => s.selectPart)
@@ -186,8 +189,8 @@ export default function OceanLab() {
           position={[0, 0.22, 2.378]}
           width={3.9}
           height={0.45}
-          lines={['Pacific Ocean', 'normal / El Niño cross-section']}
-          small="A · CLIMATE ENGINE"
+          lines={plaque.lines}
+          small={plaque.small}
         />
       </group>
 
@@ -236,12 +239,8 @@ export default function OceanLab() {
 
       {showLabels && (
         <>
-          <SceneLabel position={[0.1, 3.95, -1.4]} tone={isElNino ? 'warm' : 'cool'}>
-            {isElNino ? 'Trade winds weaken' : 'Trade winds'}
-          </SceneLabel>
-          <SceneLabel position={[3.1, 1.0, 1.9]} tone="cool">
-            Upwelling
-          </SceneLabel>
+          <SceneLabel position={[0.1, 3.95, -1.4]} tone={isElNino ? 'warm' : 'cool'} labelKey={isElNino ? 'tradeWindsWeaken' : 'tradeWinds'} />
+          <SceneLabel position={[3.1, 1.0, 1.9]} tone="cool" labelKey="upwelling" />
         </>
       )}
 

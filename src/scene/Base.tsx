@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { ContactShadows } from '@react-three/drei'
 import * as THREE from 'three'
 import { Plaque } from './primitives'
+import { getScenePlaque } from '../data/sceneLabels'
 import { motionTime, useExperience } from '../store/useExperience'
 
 const floorVertex = /* glsl */ `
@@ -146,6 +147,8 @@ function GroundDetails() {
 }
 
 export default function Base() {
+  const language = useExperience((state) => state.language)
+  const plaque = getScenePlaque('base', language)
   return (
     <group>
       {/* floating exhibition floor */}
@@ -186,8 +189,8 @@ export default function Base() {
           position={[0, -0.47, 8.04]}
           width={7.4}
           height={0.76}
-          lines={['Every Drop Has a Story', 'El Niño · Rainwater Harvesting · Drip Irrigation']}
-          small="AHMADI BEGUM · CLASS 7B"
+          lines={plaque.lines}
+          small={plaque.small}
         />
       </group>
 

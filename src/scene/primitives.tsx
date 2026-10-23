@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Billboard, Html, RoundedBox } from '@react-three/drei'
 import * as THREE from 'three'
-import { isMotionRunning, motionTime } from '../store/useExperience'
+import { isMotionRunning, motionTime, useExperience } from '../store/useExperience'
+import { getSceneLabel, type SceneLabelKey } from '../data/sceneLabels'
 
 export const COLORS = {
   ink: '#07111f',
@@ -326,18 +327,22 @@ export function RainSystem({
 export function SceneLabel({
   position,
   children,
+  labelKey,
   tone = 'cool',
   className = '',
   visible = true,
   onClick,
 }: {
   position: [number, number, number]
-  children: React.ReactNode
+  children?: React.ReactNode
+  labelKey?: SceneLabelKey
   tone?: 'cool' | 'warm' | 'neutral'
   className?: string
   visible?: boolean
   onClick?: () => void
 }) {
+  const language = useExperience((state) => state.language)
+  const content = labelKey ? getSceneLabel(labelKey, language) : children
   return (
     <Html
       position={position}
@@ -358,7 +363,7 @@ export function SceneLabel({
         aria-hidden={!visible}
       >
         <span className="scene-label__dot" />
-        {children}
+        {content}
       </button>
     </Html>
   )
@@ -376,9 +381,10 @@ export function Plaque({
   rotation?: [number, number, number]
   width?: number
   height?: number
-  lines: [string, string]
+  lines: readonly [string, string]
   small?: string
 }) {
+  const [line0, line1] = lines
   const texture = useMemo(() => {
     const canvas = document.createElement('canvas')
     const ratio = 3
@@ -400,20 +406,20 @@ export function Plaque({
     ctx.fillStyle = '#201c17'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `600 ${Math.round(canvas.height * 0.25)}px Inter, sans-serif`
-    ctx.fillText(lines[0].toUpperCase(), canvas.width / 2, canvas.height * 0.42)
-    ctx.font = `500 ${Math.round(canvas.height * 0.15)}px Inter, sans-serif`
+    ctx.font = `600 ${Math.round(canvas.height * 0.25)}px "Fraunces Variable", Fraunces, Georgia, serif`
+    ctx.fillText(line0.toUpperCase(), canvas.width / 2, canvas.height * 0.42)
+    ctx.font = `500 ${Math.round(canvas.height * 0.15)}px "Manrope Variable", Manrope, "Segoe UI", sans-serif`
     ctx.fillStyle = 'rgba(32,28,23,.72)'
-    ctx.fillText(lines[1], canvas.width / 2, canvas.height * 0.67)
+    ctx.fillText(line1, canvas.width / 2, canvas.height * 0.67)
     if (small) {
-      ctx.font = `500 ${Math.round(canvas.height * 0.1)}px JetBrains Mono, monospace`
+      ctx.font = `500 ${Math.round(canvas.height * 0.1)}px "JetBrains Mono Variable", monospace`
       ctx.fillText(small, canvas.width / 2, canvas.height * 0.84)
     }
     const tex = new THREE.CanvasTexture(canvas)
     tex.colorSpace = THREE.SRGBColorSpace
     tex.anisotropy = 4
     return tex
-  }, [lines, small, width, height])
+  }, [line0, line1, small, width, height])
 
   useEffect(() => () => texture?.dispose(), [texture])
 

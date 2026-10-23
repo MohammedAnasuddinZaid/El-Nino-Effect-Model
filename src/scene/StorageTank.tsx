@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { LAYOUT } from '../data/layout'
 import { isMotionRunning, scrollSignals, motionTime, useExperience } from '../store/useExperience'
 import { Plaque, SceneLabel, damp, smoothstep } from './primitives'
+import { getScenePlaque } from '../data/sceneLabels'
 
 function TankBubbles({ active }: { active: boolean }) {
   const mesh = useRef<THREE.InstancedMesh>(null)
@@ -85,6 +86,8 @@ function TankSurfaceMaterial() {
 }
 
 export default function StorageTank() {
+  const language = useExperience((s) => s.language)
+  const plaque = getScenePlaque('storage', language)
   const selectPart = useExperience((s) => s.selectPart)
   const activeChapter = useExperience((s) => s.activeChapter)
   const labelsOn = useExperience((s) => s.labels)
@@ -280,24 +283,22 @@ export default function StorageTank() {
         position={[0, 0.16, 1.205]}
         width={1.95}
         height={0.28}
-        lines={['Rainwater reserve', 'store for dry days']}
-        small="05 · STORAGE"
+        lines={plaque.lines}
+        small={plaque.small}
       />
 
       <SceneLabel
         position={[-0.1, 2.02, 0.6]}
         tone="cool"
+        labelKey="waterLevel"
         visible={labelsOn && activeChapter === 6}
-      >
-        Water level rises
-      </SceneLabel>
+      />
       <SceneLabel
         position={[1.56, 0.56, 0.45]}
         tone="neutral"
+        labelKey="outletToCrops"
         visible={labelsOn && activeChapter === 7}
-      >
-        Outlet to crops
-      </SceneLabel>
+      />
     </group>
   )
 }
