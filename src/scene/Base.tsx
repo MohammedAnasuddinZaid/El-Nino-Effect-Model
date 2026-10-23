@@ -20,7 +20,7 @@ const floorFragment = /* glsl */ `
     float d = length(p);
     float glow = smoothstep(0.5, 0.06, d) * 0.5 + smoothstep(0.3, 0.02, d) * 0.16;
     float ring = smoothstep(0.002, 0.0, abs(d - 0.28)) * 0.14 + smoothstep(0.002, 0.0, abs(d - 0.34)) * 0.08;
-    vec3 color = vec3(0.02, 0.08, 0.13) + glow * vec3(0.03, 0.14, 0.19) + ring * vec3(0.18, 0.45, 0.52);
+    vec3 color = vec3(0.055, 0.028, 0.016) + glow * vec3(0.16, 0.06, 0.02) + ring * vec3(0.34, 0.14, 0.045);
     float alpha = smoothstep(0.5, 0.16, d) * 0.95;
     gl_FragColor = vec4(color, alpha);
   }
@@ -43,9 +43,9 @@ const terrainFragment = /* glsl */ `
   }
   void main() {
     float n = noise(vWorld.xz * 0.48) * 0.6 + noise(vWorld.xz * 1.8) * 0.25;
-    vec3 dark = vec3(0.033, 0.085, 0.10);
-    vec3 light = vec3(0.09, 0.15, 0.145);
-    vec3 warm = vec3(0.20, 0.16, 0.105);
+    vec3 dark = vec3(0.060, 0.038, 0.024);
+    vec3 light = vec3(0.135, 0.098, 0.064);
+    vec3 warm = vec3(0.255, 0.130, 0.050);
     float warmZone = smoothstep(-6.0, 2.0, vWorld.x) * (1.0 - smoothstep(9.0, 15.0, vWorld.x));
     vec3 color = mix(dark, light, n);
     color = mix(color, warm, warmZone * 0.22 * (0.55 + n * 0.45));
@@ -84,10 +84,10 @@ function Motes() {
   return (
     <points ref={points} geometry={geometry}>
       <pointsMaterial
-        color="#8dd8ef"
+        color="#e8c69c"
         size={0.032}
         transparent
-        opacity={0.22}
+        opacity={0.16}
         depthWrite={false}
         sizeAttenuation
         blending={THREE.AdditiveBlending}

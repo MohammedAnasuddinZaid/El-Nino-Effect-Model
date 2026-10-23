@@ -3,6 +3,7 @@ import '@fontsource-variable/inter/index.css'
 import '@fontsource-variable/inter/wght-italic.css'
 import '@fontsource-variable/jetbrains-mono/index.css'
 import './styles.css'
+import './warm.css'
 import App from './App'
 
 if ('scrollRestoration' in history) {

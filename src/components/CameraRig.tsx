@@ -80,12 +80,12 @@ export function CameraRig() {
       lastViewShift.current = 0
       lastViewShiftY.current = 0
       if (controls.current) {
-        controls.current.enabled = false
+        controls.current.enabled = size.width >= 900
         if (controls.current.target) lookTarget.current.copy(controls.current.target)
       }
       flight.current = null
     }
-  }, [camera, explore])
+  }, [camera, explore, size.width])
 
   useEffect(() => {
     const onContextMenu = () => {
@@ -188,7 +188,7 @@ export function CameraRig() {
       desiredTarget.current.y += Math.cos(breath * 0.65) * 0.02
     }
 
-    const lambda = reducedMotion ? 12 : 2.35
+    const lambda = reducedMotion ? 14 : 3.1
     camera.position.x = THREE.MathUtils.damp(camera.position.x, desiredPosition.current.x, lambda, delta)
     camera.position.y = THREE.MathUtils.damp(camera.position.y, desiredPosition.current.y, lambda, delta)
     camera.position.z = THREE.MathUtils.damp(camera.position.z, desiredPosition.current.z, lambda, delta)
@@ -201,12 +201,12 @@ export function CameraRig() {
     let desiredShift = 0
     let desiredShiftY = 0
     if (size.width >= 900) {
-      if (chapter.align === 'left') desiredShift = -size.width * 0.15
-      if (chapter.align === 'right') desiredShift = size.width * 0.15
+      // Keep the diorama just right of the editorial text column.
+      desiredShift = -size.width * 0.06
+      desiredShiftY = size.height * 0.02
     } else {
-      // On phones and tablets the story card sits below the model: lift the
-      // composition into the clear upper part of the viewport.
-      desiredShiftY = size.height * 0.14
+      // On phones the story sits below the model: lift the diorama into the clear upper view.
+      desiredShiftY = size.height * 0.18
     }
     lastViewShift.current = THREE.MathUtils.damp(lastViewShift.current, desiredShift, 3, delta)
     lastViewShiftY.current = THREE.MathUtils.damp(lastViewShiftY.current, desiredShiftY, 3, delta)
@@ -232,25 +232,34 @@ export function CameraRig() {
         useExperience.getState().setActiveChapter(chapterIndex)
       }
     }
-    if (controls.current) controls.current.enabled = false
   })
 
   return (
     <OrbitControls
       ref={controls}
       makeDefault
-      enabled={false}
+      enabled={explore || size.width >= 900}
       enableDamping
-      dampingFactor={0.065}
+      dampingFactor={0.075}
       rotateSpeed={0.55}
       zoomSpeed={0.75}
       panSpeed={0.5}
       enablePan={false}
+      enableZoom={explore}
       minDistance={2.4}
-      maxDistance={38}
+      maxDistance={48}
       minPolarAngle={Math.PI * 0.12}
       maxPolarAngle={Math.PI * 0.475}
       target={[0, 1.4, 0]}
+      onStart={() => {
+        if (size.width < 900) return
+        const state = useExperience.getState()
+        if (!state.explore) {
+          state.setExplore(true)
+          state.setAutoTour(false)
+          state.setPaused(false)
+        }
+      }}
     />
   )
 }

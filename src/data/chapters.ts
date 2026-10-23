@@ -108,8 +108,8 @@ export const CHAPTERS: Chapter[] = [
     caption: 'Water stress is a local experience of a much larger climate pattern.',
     align: 'right',
     camera: {
-      start: { position: [7.8, 5.8, 11.5], target: [7.0, 1.3, 1.5] },
-      end: { position: [6.0, 4.2, 9.2], target: [8.0, 1.0, 1.6] },
+      start: { position: [9.6, 6.4, 14.5], target: [8.4, 1.2, 1.2] },
+      end: { position: [8.3, 5.0, 12.2], target: [9.4, 1.0, 1.5] },
     },
     metrics: [
       { label: 'Soil', value: 'Dry', tone: 'warm' },
@@ -130,8 +130,8 @@ export const CHAPTERS: Chapter[] = [
     caption: 'Rain → roof → gutter → downpipe → filter.',
     align: 'left',
     camera: {
-      start: { position: [-0.9, 5.5, 10.2], target: [-2.6, 2.7, 0.7] },
-      end: { position: [0.6, 3.8, 7.6], target: [-0.4, 2.45, 1.25] },
+      start: { position: [0.8, 6.0, 12.2], target: [-1.9, 2.35, 0.7] },
+      end: { position: [0.2, 4.6, 9.4], target: [-0.6, 2.2, 1.1] },
     },
     metrics: [
       { label: 'Catchment', value: 'Roof', tone: 'cool' },
@@ -152,8 +152,8 @@ export const CHAPTERS: Chapter[] = [
     caption: 'A filter improves clarity. Drinking-water safety needs treatment and testing.',
     align: 'right',
     camera: {
-      start: { position: [3.5, 2.5, 6.1], target: [1.05, 1.5, 1.95] },
-      end: { position: [2.5, 1.95, 4.7], target: [1.05, 1.35, 1.98] },
+      start: { position: [3.8, 4.8, 12.4], target: [1.15, 1.55, 1.7] },
+      end: { position: [3.1, 3.9, 10.6], target: [1.2, 1.4, 1.85] },
     },
     metrics: [
       { label: 'Debris', value: 'Trapped', tone: 'warm' },
@@ -175,8 +175,8 @@ export const CHAPTERS: Chapter[] = [
     caption: 'Store what falls, so the next dry day has a reserve.',
     align: 'left',
     camera: {
-      start: { position: [6.7, 2.9, 6.6], target: [4.0, 1.0, 1.7] },
-      end: { position: [6.2, 2.3, 5.3], target: [4.15, 0.85, 1.7] },
+      start: { position: [8.8, 5.0, 11.6], target: [4.1, 1.1, 1.6] },
+      end: { position: [7.9, 4.2, 10.0], target: [4.2, 0.95, 1.65] },
     },
     metrics: [
       { label: 'Tank level', value: 'Rising', tone: 'cool' },
@@ -198,8 +198,8 @@ export const CHAPTERS: Chapter[] = [
     caption: 'Slow, local, controlled. Drip irrigation stretches stored water.',
     align: 'right',
     camera: {
-      start: { position: [10.7, 3.2, 8.0], target: [10.8, 1.0, 1.0] },
-      end: { position: [12.3, 1.65, 5.4], target: [11.1, 0.52, 1.9] },
+      start: { position: [15.4, 5.8, 13.4], target: [10.6, 0.95, 1.2] },
+      end: { position: [14.0, 4.6, 11.4], target: [10.7, 0.72, 1.5] },
     },
     metrics: [
       { label: 'Delivery', value: 'Drop by drop', tone: 'cool' },
@@ -220,8 +220,8 @@ export const CHAPTERS: Chapter[] = [
     caption: 'Harvest what falls. Store what is needed. Deliver it with care.',
     align: 'left',
     camera: {
-      start: { position: [7.0, 8.0, 17.5], target: [1.0, 1.7, 0] },
-      end: { position: [0.0, 12.0, 27.0], target: [0.0, 1.1, 0] },
+      start: { position: [0, 10.5, 34], target: [0, 1.5, 0] },
+      end: { position: [0.8, 12.5, 38], target: [0, 1.15, 0] },
     },
     metrics: [
       { label: 'El Niño', value: 'Understand', tone: 'warm' },

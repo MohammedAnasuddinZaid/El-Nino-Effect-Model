@@ -331,12 +331,14 @@ function Hero({
 
 export function StoryLayer(props: StoryLayerProps) {
   const activeChapter = useExperience((state) => state.activeChapter)
+  const explore = useExperience((state) => state.explore)
+  const selectedPart = useExperience((state) => state.selectedPart)
   const chapter = CHAPTERS[activeChapter] ?? CHAPTERS[0]
   const isHero = activeChapter === 0
   const headerLabel = isHero ? 'Opening' : `Chapter ${chapter.number}`
 
   return (
-    <div className="story-layer">
+    <div className="story-layer" inert={explore || Boolean(selectedPart)}>
       <div className="story-layer__meta" aria-hidden="true">
         <span>{headerLabel}</span>
         <span className="story-layer__meta-line" />
@@ -349,10 +351,10 @@ export function StoryLayer(props: StoryLayerProps) {
             <motion.div
               key="hero"
               className="story-transition"
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             >
               <Hero {...props} />
             </motion.div>
@@ -360,10 +362,10 @@ export function StoryLayer(props: StoryLayerProps) {
             <motion.div
               key={chapter.id}
               className="story-transition"
-              initial={{ opacity: 0, y: 22 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
             >
               <ChapterPanel chapter={chapter} index={activeChapter} onReplay={props.onReplay} />
             </motion.div>

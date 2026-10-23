@@ -18,7 +18,7 @@ import { InfoPanel } from './components/InfoPanel'
 import { HarvestCalculator } from './components/HarvestCalculator'
 import { SceneErrorBoundary } from './components/SceneErrorBoundary'
 
-const TOUR_INTERVAL = 18_000
+const TOUR_INTERVAL = 14_000
 
 export default function App() {
   const [webglAvailable, setWebglAvailable] = useState(() => detectWebGL())

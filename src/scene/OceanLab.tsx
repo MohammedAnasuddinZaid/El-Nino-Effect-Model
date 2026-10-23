@@ -229,15 +229,6 @@ export default function OceanLab() {
 
       {showLabels && (
         <>
-          <SceneLabel position={[-3.35, 2.72, 2.35]} tone="neutral">
-            WEST PACIFIC
-          </SceneLabel>
-          <SceneLabel position={[3.35, 2.72, 2.35]} tone="neutral">
-            EAST PACIFIC
-          </SceneLabel>
-          <SceneLabel position={[warmX, 2.83, 1.35]} tone="warm">
-            {isElNino ? 'Warm pool shifts east' : 'Warm surface water'}
-          </SceneLabel>
           <SceneLabel position={[0.1, 3.95, -1.4]} tone={isElNino ? 'warm' : 'cool'}>
             {isElNino ? 'Trade winds weaken' : 'Trade winds'}
           </SceneLabel>

@@ -56,16 +56,16 @@ function Atmosphere() {
             void main() {
               vec2 p = vUv - 0.5;
               float distanceFromCenter = length(p * vec2(1.0, 1.65));
-              vec3 top = vec3(0.012, 0.032, 0.047);
-              vec3 bottom = vec3(0.006, 0.014, 0.022);
+              vec3 top = vec3(0.030, 0.014, 0.008);
+              vec3 bottom = vec3(0.012, 0.006, 0.004);
               vec3 color = mix(bottom, top, vUv.y);
-              float leftGlow = exp(-length((vUv - vec2(0.18, 0.46)) * vec2(1.1, 2.3)) * 4.5);
-              float rightGlow = exp(-length((vUv - vec2(0.82, 0.4)) * vec2(1.4, 2.6)) * 5.6);
-              color += leftGlow * vec3(0.015, 0.095, 0.115);
-              color += rightGlow * vec3(0.10, 0.032, 0.012);
-              color += smoothstep(0.42, 0.0, distanceFromCenter) * vec3(0.01, 0.028, 0.032);
+              float leftGlow = exp(-length((vUv - vec2(0.16, 0.46)) * vec2(1.1, 2.3)) * 4.5);
+              float rightGlow = exp(-length((vUv - vec2(0.84, 0.4)) * vec2(1.4, 2.6)) * 5.6);
+              color += leftGlow * vec3(0.070, 0.022, 0.006);
+              color += rightGlow * vec3(0.008, 0.026, 0.028);
+              color += smoothstep(0.42, 0.0, distanceFromCenter) * vec3(0.018, 0.008, 0.004);
               float grain = hash(gl_FragCoord.xy) - 0.5;
-              gl_FragColor = vec4(color + grain * 0.005, 1.0);
+              gl_FragColor = vec4(color + grain * 0.003, 1.0);
             }
           `}
           depthWrite={false}
@@ -142,8 +142,8 @@ function Lighting() {
 
   return (
     <>
-      <ambientLight intensity={0.32} color="#91adba" />
-      <hemisphereLight args={['#b7e4f2', '#190f09', 0.72]} />
+      <ambientLight intensity={0.4} color="#d8c3a5" />
+      <hemisphereLight args={['#a9c9cb', '#1a0d06', 0.68]} />
       <directionalLight
         ref={key}
         position={[10, 17, 12]}
@@ -255,7 +255,7 @@ function SceneContents({ onReady }: { onReady: () => void }) {
     <>
       <TimeDriver />
       <SceneReady onReady={onReady} />
-      <fogExp2 attach="fog" args={['#06121b', 0.017]} />
+      <fogExp2 attach="fog" args={['#100904', 0.011]} />
       <Atmosphere />
       <Lighting />
       <CameraRig />
@@ -313,8 +313,8 @@ export function ExperienceCanvas({ onReady }: { onReady: () => void }) {
         }}
         shadows="percentage"
         onCreated={({ gl, scene }) => {
-          gl.setClearColor('#040c13', 1)
-          scene.background = new THREE.Color('#040c13')
+          gl.setClearColor('#100904', 1)
+          scene.background = new THREE.Color('#100904')
         }}
         onPointerMissed={() => selectPart(null)}
       >
