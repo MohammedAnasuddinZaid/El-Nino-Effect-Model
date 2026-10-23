@@ -272,7 +272,7 @@ export function CameraRig() {
       maxPolarAngle={Math.PI * 0.475}
       target={[0, 1.4, 0]}
       onStart={() => {
-        manualOrbitUntil.current = Date.now() + 2400
+        manualOrbitUntil.current = Number.POSITIVE_INFINITY
         const state = useExperience.getState()
         const presentingNow = state.autoTour || state.processPlaying
         if (presentingNow) return
@@ -282,6 +282,9 @@ export function CameraRig() {
           state.setAutoTour(false)
           state.setPaused(false)
         }
+      }}
+      onEnd={() => {
+        manualOrbitUntil.current = Date.now() + 1500
       }}
     />
   )

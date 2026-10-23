@@ -15,6 +15,7 @@ export function initSmoothScroll(reducedMotion = false) {
     touchMultiplier: 1.5,
     syncTouch: false,
     autoRaf: false,
+    allowNestedScroll: true,
   })
 
   const raf = (time: number) => {

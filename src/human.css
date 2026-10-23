@@ -1869,3 +1869,23 @@ body {
     padding: 8px 10px;
   }
 }
+
+/* ==========================================================================
+   Scrollable surfaces: wheel + touch must reach these panels
+   ========================================================================== */
+
+.story-stage,
+.hero-panel,
+.chapter-panel,
+.chapter-panel--finale,
+.inspector,
+.filter-layer-list,
+.filter-layer-detail,
+.view-popover {
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+.inspector {
+  overscroll-behavior: contain;
+}
