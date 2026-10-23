@@ -267,7 +267,6 @@ function SceneContents({ onReady, enablePost }: { onReady: () => void; enablePos
       <Pump />
       <IrrigationField />
       <Connections />
-      <SelectionBeacon />
       {enablePost ? (
         <EffectComposer multisampling={0} enableNormalPass={false}>
           <Bloom intensity={0.32} luminanceThreshold={0.78} luminanceSmoothing={0.2} mipmapBlur radius={0.72} />

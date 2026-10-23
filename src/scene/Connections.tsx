@@ -79,7 +79,7 @@ export default function Connections() {
     <group>
       {/* downpipe and filter feed */}
       <group onPointerDown={onDownpipe} onPointerOver={() => (document.body.style.cursor = 'pointer')} onPointerOut={() => (document.body.style.cursor = '')}>
-        <FlowPipe points={PIPE_ROUTES.gutterToFilter} radius={0.095} active={collected} speed={0.52} particles={16} color="#65dcff" />
+        <FlowPipe points={PIPE_ROUTES.gutterToFilter} radius={0.095} active={collected} speed={0.52} particles={16} color="#9a7a55" />
       </group>
 
       {/* filter to tank */}
@@ -117,7 +117,7 @@ export default function Connections() {
 
       {/* a short gutter water connection */}
       <group onPointerDown={onGutter}>
-        <FlowPipe points={PIPE_ROUTES.roofToGutter} radius={0.02} active={activeChapter === 4 || activeChapter === 5} speed={0.7} particles={10} color="#93edff" />
+        <FlowPipe points={PIPE_ROUTES.roofToGutter} radius={0.02} active={activeChapter === 4 || activeChapter === 5} speed={0.7} particles={10} color="#9a7a55" />
       </group>
 
       {/* fittings */}

@@ -107,9 +107,10 @@ export default function House() {
   const selectPart = useExperience((s) => s.selectPart)
   const exploded = useExperience((s) => s.exploded)
   const roofGroup = useRef<THREE.Group>(null)
-  const rainOn = activeChapter === 4
+  const motionDemo = useExperience((s) => s.motionDemo)
+  const rainOn = activeChapter === 4 || motionDemo || selectedPart === 'roof' || selectedPart === 'gutter' || selectedPart === 'downpipe' || selectedPart === 'ocean'
   const stormLight = activeChapter >= 3 && activeChapter <= 5
-  const flowOn = activeChapter === 4 || activeChapter === 5 || activeChapter === 6 || activeChapter === 8
+  const flowOn = activeChapter === 4 || activeChapter === 5 || activeChapter === 6 || activeChapter === 8 || motionDemo
   const showLabels = labelsOn && (activeChapter === 4 || activeChapter === 5)
   const roofSelected = selectedPart === 'roof'
   const gutterSelected = selectedPart === 'gutter'
@@ -216,7 +217,7 @@ export default function House() {
           <boxGeometry args={[0.12, 0.16, 3.95]} />
           <meshStandardMaterial color="#2b3b42" roughness={0.7} />
         </mesh>
-        <RoofWater active={activeChapter === 4 || activeChapter === 5} />
+        <RoofWater active={activeChapter === 4 || activeChapter === 5 || motionDemo} />
       </group>
 
       {/* Gutter trough */}
