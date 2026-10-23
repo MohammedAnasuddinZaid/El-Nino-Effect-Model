@@ -147,7 +147,46 @@ function FilterDrops({ active }: { active: boolean }) {
   return (
     <instancedMesh ref={mesh} args={[undefined, undefined, seeds.length]} frustumCulled={false}>
       <sphereGeometry args={[0.018, 5, 5]} />
-      <meshBasicMaterial ref={mat} color="#6ddcff" transparent opacity={0} depthWrite={false} toneMapped={false} />
+      <meshBasicMaterial ref={mat} color="#9a7a55" transparent opacity={0} depthWrite={false} toneMapped={false} />
+    </instancedMesh>
+  )
+}
+
+function OutletDrops({ active }: { active: boolean }) {
+  const mesh = useRef<THREE.InstancedMesh>(null)
+  const mat = useRef<THREE.MeshBasicMaterial>(null)
+  const dummy = useMemo(() => new THREE.Object3D(), [])
+  const seeds = useMemo(
+    () =>
+      Array.from({ length: 18 }, () => ({
+        x: (Math.random() - 0.5) * 0.34,
+        z: (Math.random() - 0.5) * 0.34,
+        y: 2.32 - Math.random() * 0.4,
+        speed: 0.12 + Math.random() * 0.14,
+      })),
+    [],
+  )
+  const current = useRef(0)
+  useFrame((_, dt) => {
+    current.current = damp(current.current, active ? 1 : 0, 3.8, Math.min(dt, 0.04))
+    if (mat.current) mat.current.opacity = current.current * 0.82
+    if (!mesh.current) return
+    mesh.current.visible = current.current > 0.015
+    for (let i = 0; i < seeds.length; i += 1) {
+      const s = seeds[i]
+      s.y -= s.speed * Math.min(dt, 0.04)
+      if (s.y < 1.5) s.y = 2.32
+      dummy.position.set(s.x, s.y, s.z + 0.34)
+      dummy.scale.setScalar(0.6 + Math.random() * 0.15)
+      dummy.updateMatrix()
+      mesh.current.setMatrixAt(i, dummy.matrix)
+    }
+    mesh.current.instanceMatrix.needsUpdate = true
+  })
+  return (
+    <instancedMesh ref={mesh} args={[undefined, undefined, seeds.length]} frustumCulled={false}>
+      <sphereGeometry args={[0.016, 5, 5]} />
+      <meshBasicMaterial ref={mat} color="#9be8dc" transparent opacity={0} depthWrite={false} toneMapped={false} />
     </instancedMesh>
   )
 }
@@ -358,6 +397,7 @@ export default function Filter() {
         </group>
 
         <FilterDrops active={filterOpen || (playback && active)} />
+        <OutletDrops active={filterOpen || (playback && active)} />
       </group>
 
       <SceneLabel

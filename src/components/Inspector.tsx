@@ -1,9 +1,11 @@
 import { AnimatePresence, motion } from 'motion/react'
-import { PART_LIST, type PartId } from '../data/components'
+import { useEffect, useState } from 'react'
+import { PART_LIST, PART_NARRATION, type PartId } from '../data/components'
 import { FILTER_LAYERS } from '../data/filterLayers'
 import { getUiCopy } from '../data/i18n'
 import { getPartInfo } from '../data/partCopy'
 import { useExperience } from '../store/useExperience'
+import { useNarration } from '../hooks/useNarration'
 import { Icon } from './Icons'
 
 export function Inspector() {
@@ -19,11 +21,30 @@ export function Inspector() {
   const setExplore = useExperience((state) => state.setExplore)
   const setFilterOpen = useExperience((state) => state.setFilterOpen)
   const setFilterLayer = useExperience((state) => state.setFilterLayer)
+  const voiceOn = useExperience((state) => state.voiceOn)
+  const motionDemo = useExperience((state) => state.motionDemo)
+  const setMotionDemo = useExperience((state) => state.setMotionDemo)
+  const oceanMode = useExperience((state) => state.oceanMode)
+  const setOceanMode = useExperience((state) => state.setOceanMode)
   const copy = getUiCopy(language)
 
   const part = selectedPart ? getPartInfo(selectedPart, language) : null
   const partIndex = part ? PART_LIST.findIndex((item) => item.id === part.id) : -1
   const selectedLayer = filterLayer != null ? FILTER_LAYERS[filterLayer] : null
+
+  const [explain, setExplain] = useState(false)
+  const partNarration = part ? PART_NARRATION[part.id as PartId][language] : ''
+  const narration = useNarration({
+    src: part ? `/audio/${language}/part-${part.id}.mp3` : undefined,
+    fallbackText: partNarration,
+    language,
+    enabled: explain && voiceOn,
+    onEnd: () => setExplain(false),
+  })
+
+  useEffect(() => {
+    setExplain(false)
+  }, [selectedPart])
 
   const close = () => {
     const hadFocus = Boolean(focusPart)
@@ -189,6 +210,37 @@ export function Inspector() {
               <Icon name="explore" size={16} />
               {explore ? copy.stopExploring : copy.freeExplore}
             </button>
+            <button
+              type="button"
+              className={`button button--ghost ${explain ? 'is-on' : ''}`}
+              onClick={() => {
+                if (!voiceOn) return
+                setExplain((v) => !v)
+              }}
+              aria-pressed={explain}
+            >
+              <Icon name={explain ? 'pause' : 'play'} size={15} />
+              {explain ? copy.stopExplaining : copy.explainPart}
+            </button>
+            <button
+              type="button"
+              className={`button button--ghost ${motionDemo ? 'is-on' : ''}`}
+              onClick={() => setMotionDemo(!motionDemo)}
+              aria-pressed={motionDemo}
+            >
+              <Icon name="sparkle" size={15} />
+              {motionDemo ? copy.hideMotion : copy.showMotion}
+            </button>
+            {part.id === 'ocean' && (
+              <button
+                type="button"
+                className={`button button--ghost ${oceanMode === 'elnino' ? 'is-on' : ''}`}
+                onClick={() => setOceanMode(oceanMode === 'elnino' ? 'normal' : 'elnino')}
+              >
+                <Icon name="sun" size={15} />
+                {oceanMode === 'elnino' ? copy.showNormal : copy.showElNino}
+              </button>
+            )}
           </div>
 
           <div className="inspector__foot">

@@ -20,6 +20,7 @@ type ExperienceState = {
   paused: boolean
   autoTour: boolean
   processPlaying: boolean
+  motionDemo: boolean
   explore: boolean
   cutaway: boolean
   exploded: boolean
@@ -41,6 +42,7 @@ type ExperienceState = {
   setPaused: (paused: boolean) => void
   setAutoTour: (on: boolean) => void
   setProcessPlaying: (on: boolean) => void
+  setMotionDemo: (on: boolean) => void
   toggleProcessPlaying: () => void
   toggleExplore: () => void
   setExplore: (on: boolean) => void
@@ -74,6 +76,7 @@ export const useExperience = create<ExperienceState>((set) => ({
   paused: false,
   autoTour: false,
   processPlaying: false,
+  motionDemo: false,
   explore: false,
   cutaway: false,
   exploded: false,
@@ -112,6 +115,7 @@ export const useExperience = create<ExperienceState>((set) => ({
       panel: processPlaying ? null : state.panel,
       explore: processPlaying ? false : state.explore,
     })),
+  setMotionDemo: (motionDemo) => set({ motionDemo }),
   toggleProcessPlaying: () =>
     set((state) => {
       const processPlaying = !state.processPlaying
@@ -179,6 +183,7 @@ export const useExperience = create<ExperienceState>((set) => ({
       paused: false,
       autoTour: false,
       processPlaying: false,
+      motionDemo: false,
       explore: false,
       cutaway: false,
       exploded: false,
@@ -196,7 +201,7 @@ export const useExperience = create<ExperienceState>((set) => ({
 /** True only when the visitor has explicitly asked a process to run. */
 export function isMotionRunning() {
   const state = useExperience.getState()
-  return !state.paused && (state.autoTour || state.processPlaying)
+  return !state.paused && (state.autoTour || state.processPlaying || state.motionDemo)
 }
 
 /**
