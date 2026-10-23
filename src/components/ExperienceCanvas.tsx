@@ -5,6 +5,7 @@ import * as THREE from 'three'
 import { CHAPTERS } from '../data/chapters'
 import type { PartId } from '../data/components'
 import { motionTime, scrollSignals, useExperience } from '../store/useExperience'
+import { isMotionRunning } from '../store/useExperience'
 import Base from '../scene/Base'
 import OceanLab from '../scene/OceanLab'
 import House from '../scene/House'
@@ -17,7 +18,7 @@ import { CameraRig } from './CameraRig'
 
 function TimeDriver() {
   useFrame((_, rawDelta) => {
-    if (useExperience.getState().paused) return
+    if (!isMotionRunning()) return
     const delta = Math.min(rawDelta, 0.05)
     motionTime.value += delta
     motionTime.rain += delta

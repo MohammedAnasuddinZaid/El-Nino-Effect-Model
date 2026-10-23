@@ -5,7 +5,7 @@ import * as THREE from 'three'
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import { CHAPTERS } from '../data/chapters'
 import { PARTS } from '../data/components'
-import { motionTime, scrollSignals, useExperience } from '../store/useExperience'
+import { isMotionRunning, motionTime, scrollSignals, useExperience } from '../store/useExperience'
 
 const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 
@@ -177,7 +177,7 @@ export function CameraRig() {
       desiredPosition.current.sub(desiredTarget.current).multiplyScalar(narrowFactor).add(desiredTarget.current)
     }
 
-    const canDrift = !paused && !reducedMotion
+    const canDrift = isMotionRunning() && !reducedMotion
     if (canDrift) {
       drift.current += delta
       const breath = motionTime.value * 0.16

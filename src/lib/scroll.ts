@@ -2,6 +2,7 @@ import Lenis from 'lenis'
 
 let lenis: Lenis | null = null
 let animationFrame = 0
+let scrollLockCount = 0
 
 export function initSmoothScroll(reducedMotion = false) {
   if (typeof window === 'undefined' || lenis) return lenis
@@ -21,6 +22,7 @@ export function initSmoothScroll(reducedMotion = false) {
     animationFrame = requestAnimationFrame(raf)
   }
   animationFrame = requestAnimationFrame(raf)
+  if (scrollLockCount > 0) lenis.stop()
   return lenis
 }
 
@@ -66,11 +68,14 @@ export function scrollToTop(immediate = false) {
 }
 
 export function lockScroll() {
+  scrollLockCount += 1
   lenis?.stop()
   document.documentElement.classList.add('scroll-locked')
 }
 
 export function unlockScroll() {
+  scrollLockCount = Math.max(0, scrollLockCount - 1)
+  if (scrollLockCount > 0) return
   lenis?.start()
   document.documentElement.classList.remove('scroll-locked')
 }

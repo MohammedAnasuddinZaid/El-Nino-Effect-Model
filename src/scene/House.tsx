@@ -1,7 +1,7 @@
 import { useMemo, useRef } from 'react'
 import { useFrame, type ThreeEvent } from '@react-three/fiber'
 import * as THREE from 'three'
-import { motionTime, useExperience } from '../store/useExperience'
+import { isMotionRunning, motionTime, useExperience } from '../store/useExperience'
 import { COLORS, Plaque, RainSystem, SceneLabel } from './primitives'
 import { LAYOUT } from '../data/layout'
 
@@ -30,7 +30,12 @@ function RoofWater({ active }: { active: boolean }) {
   const current = useRef(0)
   const uniforms = useMemo(() => ({ uTime: { value: 0 }, uActive: { value: 0 } }), [])
   useFrame((_, dt) => {
-    current.current = THREE.MathUtils.damp(current.current, active ? 1 : 0, 3, Math.min(dt, 0.05))
+    current.current = THREE.MathUtils.damp(
+      current.current,
+      active && isMotionRunning() ? 1 : 0,
+      3,
+      Math.min(dt, 0.05),
+    )
     if (mat.current) {
       mat.current.uniforms.uTime.value = motionTime.value
       mat.current.uniforms.uActive.value = current.current

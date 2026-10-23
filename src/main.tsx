@@ -1,9 +1,12 @@
 import { createRoot } from 'react-dom/client'
-import '@fontsource-variable/inter/index.css'
-import '@fontsource-variable/inter/wght-italic.css'
+import '@fontsource-variable/manrope/index.css'
+import '@fontsource-variable/fraunces/index.css'
+import '@fontsource-variable/fraunces/wght-italic.css'
 import '@fontsource-variable/jetbrains-mono/index.css'
+import '@fontsource-variable/noto-sans-devanagari/index.css'
 import './styles.css'
 import './warm.css'
+import './human.css'
 import App from './App'
 
 if ('scrollRestoration' in history) {

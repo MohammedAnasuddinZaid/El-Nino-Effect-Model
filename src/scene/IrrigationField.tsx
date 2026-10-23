@@ -2,7 +2,7 @@ import { useMemo, useRef } from 'react'
 import { useFrame, type ThreeEvent } from '@react-three/fiber'
 import * as THREE from 'three'
 import { LAYOUT } from '../data/layout'
-import { motionTime, useExperience } from '../store/useExperience'
+import { isMotionRunning, motionTime, useExperience } from '../store/useExperience'
 import { Plaque, Plant, SceneLabel, damp } from './primitives'
 
 function Dripper({
@@ -21,8 +21,10 @@ function Dripper({
   const mat = useRef<THREE.MeshBasicMaterial>(null)
   const current = useRef(0)
   useFrame((_, dt) => {
-    current.current = damp(current.current, active ? 1 : 0, 3, Math.min(dt, 0.04))
+    const running = isMotionRunning()
+    current.current = damp(current.current, active && running ? 1 : 0, 3, Math.min(dt, 0.04))
     if (mat.current) mat.current.opacity = current.current * 0.9
+    if (!running) return
     if (drop.current) {
       const t = (motionTime.value * 0.74 + index * 0.137) % 1
       drop.current.position.y = 1.0 - t * 0.18

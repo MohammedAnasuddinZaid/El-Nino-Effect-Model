@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { Cloud, FlowPipe, Plaque, SceneLabel, WindArrow } from './primitives'
 import { LAYOUT } from '../data/layout'
-import { motionTime, useExperience } from '../store/useExperience'
+import { isMotionRunning, useExperience } from '../store/useExperience'
 import { OceanSurface, OceanVolume } from './OceanWater'
 
 function Drizzle({
@@ -32,10 +32,17 @@ function Drizzle({
   )
   const current = useRef(0)
   useFrame((_, dt) => {
-    current.current = THREE.MathUtils.damp(current.current, active ? 1 : 0, 2.8, Math.min(dt, 0.05))
+    const running = isMotionRunning()
+    current.current = THREE.MathUtils.damp(
+      current.current,
+      active && running ? 1 : 0,
+      2.8,
+      Math.min(dt, 0.05),
+    )
     if (mat.current) mat.current.opacity = current.current * 0.55
     if (!mesh.current) return
     mesh.current.visible = current.current > 0.01
+    if (!running) return
     for (let i = 0; i < count; i += 1) {
       const s = seeds[i]
       s.y -= s.speed * Math.min(dt, 0.05)

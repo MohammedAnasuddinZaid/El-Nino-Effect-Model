@@ -1,6 +1,8 @@
 import { AnimatePresence, motion } from 'motion/react'
+import { useCallback } from 'react'
 import type { Chapter } from '../data/chapters'
-import { CHAPTERS } from '../data/chapters'
+import { CHAPTERS, getChapterCopy } from '../data/chapters'
+import { getUiCopy } from '../data/i18n'
 import { SOURCES } from '../data/siteContent'
 import { scrollToChapter } from '../lib/scroll'
 import { useExperience } from '../store/useExperience'
@@ -19,16 +21,16 @@ const CHAPTER_SOURCE_KEYS: Record<string, string[]> = {
 }
 
 type StoryLayerProps = {
-  narrationSupported: boolean
-  narrationOn: boolean
-  speaking: boolean
-  onToggleNarration: () => void
   onStartTour: () => void
   onReplay: () => void
+  onToggleStep: () => void
+  onExplore: () => void
 }
 
 function SourceTrail({ chapterId }: { chapterId: string }) {
   const setPanel = useExperience((state) => state.setPanel)
+  const language = useExperience((state) => state.language)
+  const copy = getUiCopy(language)
   const keys = CHAPTER_SOURCE_KEYS[chapterId] ?? []
   const orgs = keys
     .map((key) => SOURCES.find((source) => source.id === key)?.org)
@@ -37,7 +39,7 @@ function SourceTrail({ chapterId }: { chapterId: string }) {
   if (!orgs.length) return null
   return (
     <button type="button" className="source-trail" onClick={() => setPanel('sources')}>
-      <span className="source-trail__label mono">Source trail</span>
+      <span className="source-trail__label mono">{copy.sourceTrail}</span>
       <span className="source-trail__orgs">{orgs.join(' · ')}</span>
       <Icon name="arrow-right" size={13} />
     </button>
@@ -58,9 +60,11 @@ function Caption({ chapter }: { chapter: Chapter }) {
 function OceanToggle() {
   const oceanMode = useExperience((state) => state.oceanMode)
   const setOceanMode = useExperience((state) => state.setOceanMode)
+  const language = useExperience((state) => state.language)
+  const copy = getUiCopy(language)
   return (
-    <div className="ocean-toggle" role="group" aria-label="Pacific Ocean state">
-      <span className="ocean-toggle__label mono">Pacific state</span>
+    <div className="ocean-toggle" role="group" aria-label={copy.oceanState}>
+      <span className="ocean-toggle__label mono">{copy.oceanState}</span>
       <div className="segmented-control">
         <button
           type="button"
@@ -69,7 +73,7 @@ function OceanToggle() {
           aria-pressed={oceanMode === 'normal'}
         >
           <span className="segmented-control__dot segmented-control__dot--cool" />
-          Normal
+          {copy.normal}
         </button>
         <button
           type="button"
@@ -78,40 +82,86 @@ function OceanToggle() {
           aria-pressed={oceanMode === 'elnino'}
         >
           <span className="segmented-control__dot segmented-control__dot--warm" />
-          El Niño
+          {copy.elNino}
         </button>
       </div>
     </div>
   )
 }
 
-function ChapterInteraction({ chapter, onReplay }: { chapter: Chapter; onReplay: () => void }) {
+function StepPlay({ onToggleStep }: { onToggleStep: () => void }) {
+  const processPlaying = useExperience((state) => state.processPlaying)
+  const language = useExperience((state) => state.language)
+  const copy = getUiCopy(language)
+  return (
+    <button
+      type="button"
+      className={`chapter-step ${processPlaying ? 'is-playing' : ''}`}
+      onClick={onToggleStep}
+      aria-pressed={processPlaying}
+    >
+      <span className="chapter-step__icon">
+        <Icon name={processPlaying ? 'pause' : 'play'} size={14} />
+      </span>
+      <span className="chapter-step__copy">
+        <strong>{processPlaying ? copy.pauseStep : copy.presentStep}</strong>
+        <em>{processPlaying ? copy.stepPlaying : copy.stepNote}</em>
+      </span>
+      <span className={`chapter-step__wave ${processPlaying ? 'is-active' : ''}`} aria-hidden="true">
+        <i />
+        <i />
+        <i />
+        <i />
+      </span>
+    </button>
+  )
+}
+
+function ChapterInteraction({ chapter, onReplay, onExplore }: { chapter: Chapter; onReplay: () => void; onExplore: () => void }) {
   const cutaway = useExperience((state) => state.cutaway)
   const toggleCutaway = useExperience((state) => state.toggleCutaway)
   const setPanel = useExperience((state) => state.setPanel)
-  const setExplore = useExperience((state) => state.setExplore)
+  const setFilterOpen = useExperience((state) => state.setFilterOpen)
+  const requestFocus = useExperience((state) => state.requestFocus)
   const selectPart = useExperience((state) => state.selectPart)
+  const language = useExperience((state) => state.language)
+  const copy = getUiCopy(language)
+
+  const openFilter = () => {
+    setFilterOpen(true)
+    requestFocus('filter')
+  }
 
   if (chapter.id === 'pacific') return <OceanToggle />
   if (chapter.id === 'filtration') {
     return (
-      <button
-        type="button"
-        className={`inline-action ${cutaway ? 'is-active' : ''}`}
-        onClick={toggleCutaway}
-        aria-pressed={cutaway}
-      >
-        <Icon name="cutaway" size={17} />
-        <span>{cutaway ? 'Close cutaway view' : 'Open cutaway view'}</span>
-        <Icon name="arrow-right" size={14} />
-      </button>
+      <div className="chapter-inline-group">
+        <button
+          type="button"
+          className="inline-action inline-action--strong"
+          onClick={openFilter}
+        >
+          <Icon name="layers" size={17} />
+          <span>{copy.filterOpen}</span>
+          <Icon name="arrow-right" size={14} />
+        </button>
+        <button
+          type="button"
+          className={`inline-action ${cutaway ? 'is-active' : ''}`}
+          onClick={toggleCutaway}
+          aria-pressed={cutaway}
+        >
+          <Icon name="cutaway" size={17} />
+          <span>{cutaway ? copy.closeCutaway : copy.openCutaway}</span>
+        </button>
+      </div>
     )
   }
   if (chapter.id === 'storage') {
     return (
       <button type="button" className="inline-action" onClick={() => setPanel('calculator')}>
         <Icon name="drop" size={17} />
-        <span>Estimate a rooftop harvest</span>
+        <span>{copy.estimateHarvest}</span>
         <Icon name="arrow-right" size={14} />
       </button>
     )
@@ -124,10 +174,11 @@ function ChapterInteraction({ chapter, onReplay }: { chapter: Chapter; onReplay:
           className="inline-action"
           onClick={() => {
             selectPart(chapter.id === 'drip' ? 'roots' : 'roof')
+            requestFocus(chapter.id === 'drip' ? 'roots' : 'roof')
           }}
         >
           <Icon name={chapter.id === 'drip' ? 'layers' : 'cutaway'} size={17} />
-          <span>{chapter.id === 'drip' ? 'Inspect the root zone' : 'Inspect the catchment'}</span>
+          <span>{chapter.id === 'drip' ? copy.inspectRoot : copy.inspectCatchment}</span>
           <Icon name="arrow-right" size={14} />
         </button>
       </div>
@@ -137,19 +188,12 @@ function ChapterInteraction({ chapter, onReplay }: { chapter: Chapter; onReplay:
     return (
       <div className="finale-actions">
         <button type="button" className="button button--primary" onClick={onReplay}>
-          <Icon name="reset" size={15} />
-          Replay the story
+          <Icon name="play" size={15} />
+          {copy.replayStory}
         </button>
-        <button
-          type="button"
-          className="button button--ghost"
-          onClick={() => {
-            setExplore(true)
-            scrollToChapter(CHAPTERS.length - 1)
-          }}
-        >
+        <button type="button" className="button button--ghost" onClick={onExplore}>
           <Icon name="explore" size={16} />
-          Explore freely
+          {copy.exploreFreely}
         </button>
       </div>
     )
@@ -157,9 +201,23 @@ function ChapterInteraction({ chapter, onReplay }: { chapter: Chapter; onReplay:
   return null
 }
 
-function ChapterPanel({ chapter, index, onReplay }: { chapter: Chapter; index: number; onReplay: () => void }) {
+function ChapterPanel({
+  chapter,
+  index,
+  onReplay,
+  onToggleStep,
+  onExplore,
+}: {
+  chapter: Chapter
+  index: number
+  onReplay: () => void
+  onToggleStep: () => void
+  onExplore: () => void
+}) {
   const setPanel = useExperience((state) => state.setPanel)
   const requestFocus = useExperience((state) => state.requestFocus)
+  const language = useExperience((state) => state.language)
+  const copy = getUiCopy(language)
   const interactionPart =
     chapter.id === 'pacific'
       ? 'ocean'
@@ -176,7 +234,11 @@ function ChapterPanel({ chapter, index, onReplay }: { chapter: Chapter; index: n
                 : null
 
   return (
-    <article className={`chapter-panel chapter-panel--${chapter.align} ${chapter.id === 'whole-system' ? 'chapter-panel--finale' : ''}`}>
+    <article
+      className={`chapter-panel chapter-panel--${chapter.align} chapter-panel--${chapter.id} ${
+        chapter.id === 'whole-system' ? 'chapter-panel--finale' : ''
+      }`}
+    >
       <div className="chapter-panel__rail" aria-hidden="true">
         <span className="chapter-panel__rail-index mono">{chapter.number}</span>
         <span className="chapter-panel__rail-line" />
@@ -190,9 +252,9 @@ function ChapterPanel({ chapter, index, onReplay }: { chapter: Chapter; index: n
             {chapter.kicker}
           </span>
           <div className="chapter-panel__status mono">
-            <span>Chapter {chapter.number}</span>
+            <span>{copy.chapterWord} {chapter.number}</span>
             <span className="chapter-panel__status-pulse" />
-            <span>{chapter.interaction === 'calculator' ? 'Interactive' : 'Live'}</span>
+            <span>{chapter.interaction === 'calculator' ? copy.interactive : copy.live}</span>
           </div>
         </div>
 
@@ -215,18 +277,19 @@ function ChapterPanel({ chapter, index, onReplay }: { chapter: Chapter; index: n
           ))}
         </dl>
 
-        <ChapterInteraction chapter={chapter} onReplay={onReplay} />
+        <StepPlay onToggleStep={onToggleStep} />
+        <ChapterInteraction chapter={chapter} onReplay={onReplay} onExplore={onExplore} />
 
         <div className="chapter-panel__foot">
           {interactionPart ? (
             <button type="button" className="quiet-action" onClick={() => requestFocus(interactionPart)}>
               <Icon name="expand" size={14} />
-              Focus the model
+              {copy.focusModel}
             </button>
           ) : (
             <button type="button" className="quiet-action" onClick={() => setPanel('sources')}>
               <Icon name="book" size={14} />
-              Read the science
+              {copy.readScience}
             </button>
           )}
           <span className="chapter-panel__count mono">
@@ -241,72 +304,59 @@ function ChapterPanel({ chapter, index, onReplay }: { chapter: Chapter; index: n
   )
 }
 
-function Hero({
-  narrationSupported,
-  narrationOn,
-  speaking,
-  onToggleNarration,
-  onStartTour,
-}: Pick<StoryLayerProps, 'narrationSupported' | 'narrationOn' | 'speaking' | 'onToggleNarration' | 'onStartTour'>) {
+function Hero({ onStartTour, onExplore }: { onStartTour: () => void; onExplore: () => void }) {
   const setPanel = useExperience((state) => state.setPanel)
+  const language = useExperience((state) => state.language)
+  const copy = getUiCopy(language)
 
   return (
     <section className="hero-panel" aria-labelledby="hero-title">
       <div className="hero-panel__eyebrow">
         <span className="eyebrow">
           <span className="eyebrow__dot" />
-          Class 7B · Science exhibition
+          {copy.heroEyebrow}
         </span>
         <span className="hero-panel__eyebrow-divider" />
-        <span className="mono hero-panel__year">Ahmadi Begum · 2026</span>
+        <span className="mono hero-panel__year">{copy.heroYear}</span>
       </div>
 
+      <p className="hero-kicker">Ahmadi Begum · Class 7B</p>
       <h1 id="hero-title" className="hero-title">
-        <span>Every drop</span>
-        <span className="hero-title__accent">
-          has a <em>story.</em>
-        </span>
+        <span>{copy.heroTitleTop}</span>
+        <span className="hero-title__accent">{copy.heroTitleAccent}</span>
       </h1>
 
       <p className="hero-lede">
-        From a warming Pacific to a single drop at a plant’s root. A working, three-dimensional study of
-        <span> El Niño, rainwater harvesting and drip irrigation</span> — built to show how we prepare for an uncertain monsoon.
+        {copy.heroLedeA} <span>{copy.heroLedeHighlight}</span> {copy.heroLedeB}
       </p>
 
       <div className="hero-actions">
-        <button type="button" className="button button--primary button--large" onClick={() => scrollToChapter(1)}>
-          Begin the journey
-          <Icon name="arrow-down" size={17} className="button__arrow" />
+        <button type="button" className="button button--primary button--large" onClick={onStartTour}>
+          <Icon name="play" size={15} />
+          {copy.heroPresent}
         </button>
-        {narrationSupported && (
-          <button
-            type="button"
-            className={`button button--soft ${narrationOn ? 'is-on' : ''}`}
-            onClick={onToggleNarration}
-            aria-pressed={narrationOn}
-          >
-            <Icon name={speaking ? 'sound' : 'sound-off'} size={16} />
-            {narrationOn ? (speaking ? 'Narrating' : 'Narration on') : 'Listen to the intro'}
-          </button>
-        )}
-        <button type="button" className="button button--text" onClick={onStartTour}>
-          <Icon name="play" size={14} />
-          Play the guided tour
+        <button type="button" className="button button--soft" onClick={onExplore}>
+          <Icon name="explore" size={16} />
+          {copy.heroExplore}
+        </button>
+        <button type="button" className="button button--text" onClick={() => setPanel('project')}>
+          <Icon name="book" size={14} />
+          {copy.heroAbout}
         </button>
       </div>
 
       <div className="hero-meta">
         <div className="hero-meta__item">
-          <span className="mono">Exhibit</span>
-          <strong>El Niño & Water Conservation</strong>
+          <span className="mono">{copy.heroExhibitLabel}</span>
+          <strong>{copy.heroExhibitValue}</strong>
         </div>
         <div className="hero-meta__item">
-          <span className="mono">Model</span>
-          <strong>Rainwater harvesting · Drip irrigation</strong>
+          <span className="mono">{copy.heroModelLabel}</span>
+          <strong>{copy.heroModelValue}</strong>
         </div>
         <div className="hero-meta__item">
-          <span className="mono">Approach</span>
-          <strong>Understand · Capture · Conserve</strong>
+          <span className="mono">{copy.heroApproachLabel}</span>
+          <strong>{copy.heroApproachValue}</strong>
         </div>
       </div>
 
@@ -315,34 +365,36 @@ function Hero({
           <span className="scroll-cue__line">
             <span />
           </span>
-          <span>Scroll to follow the drop</span>
+          <span>{copy.heroScroll}</span>
         </button>
         <div className="hero-foot__right">
-          <button type="button" className="text-link" onClick={() => setPanel('project')}>
-            About the project
-            <Icon name="arrow-right" size={13} />
-          </button>
-          <span className="hero-foot__code mono">26°N · 82°E / 7B</span>
+          <span className="hero-credit">{copy.heroSourceLabel}</span>
+          <strong className="hero-credit__name">{copy.heroSourceValue}</strong>
         </div>
       </div>
     </section>
   )
 }
 
-export function StoryLayer(props: StoryLayerProps) {
+export function StoryLayer({ onStartTour, onReplay, onToggleStep, onExplore }: StoryLayerProps) {
   const activeChapter = useExperience((state) => state.activeChapter)
   const explore = useExperience((state) => state.explore)
   const selectedPart = useExperience((state) => state.selectedPart)
-  const chapter = CHAPTERS[activeChapter] ?? CHAPTERS[0]
+  const language = useExperience((state) => state.language)
+  const copy = getUiCopy(language)
+  const rawChapter = CHAPTERS[activeChapter] ?? CHAPTERS[0]
+  const chapter = getChapterCopy(rawChapter, language)
   const isHero = activeChapter === 0
-  const headerLabel = isHero ? 'Opening' : `Chapter ${chapter.number}`
+  const headerLabel = isHero ? copy.opening : `${copy.chapterWord} ${chapter.number}`
+
+  const scrollDown = useCallback(() => scrollToChapter(1), [])
 
   return (
     <div className="story-layer" inert={explore || Boolean(selectedPart)}>
       <div className="story-layer__meta" aria-hidden="true">
         <span>{headerLabel}</span>
         <span className="story-layer__meta-line" />
-        <span>El Niño / Water</span>
+        <span>{copy.storyMetaLeft}</span>
       </div>
 
       <div className="story-stage">
@@ -356,7 +408,7 @@ export function StoryLayer(props: StoryLayerProps) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             >
-              <Hero {...props} />
+              <Hero onStartTour={onStartTour} onExplore={onExplore} />
             </motion.div>
           ) : (
             <motion.div
@@ -367,15 +419,26 @@ export function StoryLayer(props: StoryLayerProps) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
             >
-              <ChapterPanel chapter={chapter} index={activeChapter} onReplay={props.onReplay} />
+              <ChapterPanel
+                chapter={chapter}
+                index={activeChapter}
+                onReplay={onReplay}
+                onToggleStep={onToggleStep}
+                onExplore={onExplore}
+              />
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
       <div className="story-layer__announcement sr-only" aria-live="polite">
-        {isHero ? 'Opening: Every drop has a story.' : `Chapter ${chapter.number}: ${chapter.title}`}
+        {isHero
+          ? `${copy.opening}: ${copy.heroTitleTop} ${copy.heroTitleAccent}`
+          : `${copy.chapterWord} ${chapter.number}: ${chapter.title}`}
       </div>
+      <button type="button" className="story-scroll-cue" onClick={scrollDown} aria-label={copy.heroScroll}>
+        <Icon name="arrow-down" size={14} />
+      </button>
     </div>
   )
 }

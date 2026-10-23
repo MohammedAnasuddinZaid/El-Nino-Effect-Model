@@ -1,107 +1,118 @@
 import { CHAPTERS } from '../data/chapters'
+import { getUiCopy } from '../data/i18n'
 import { scrollToChapter, scrollToTop } from '../lib/scroll'
 import { useExperience } from '../store/useExperience'
 import { Icon } from './Icons'
 
 type TopBarProps = {
-  narrationSupported: boolean
-  narrationOn: boolean
-  speaking: boolean
-  onToggleNarration: () => void
+  onToggleVoice: () => void
 }
 
-export function TopBar({ narrationSupported, narrationOn, speaking, onToggleNarration }: TopBarProps) {
+export function TopBar({ onToggleVoice }: TopBarProps) {
   const setPanel = useExperience((state) => state.setPanel)
   const setMenuOpen = useExperience((state) => state.setMenuOpen)
   const activeChapter = useExperience((state) => state.activeChapter)
+  const language = useExperience((state) => state.language)
+  const setLanguage = useExperience((state) => state.setLanguage)
+  const voiceOn = useExperience((state) => state.voiceOn)
+  const copy = getUiCopy(language)
   const lastChapter = CHAPTERS.length - 1
 
-  const openStory = () => {
+  const goToStory = () => {
     const state = useExperience.getState()
     state.setAutoTour(false)
     state.setExplore(false)
     state.clearFocus()
+    state.selectPart(null)
     scrollToChapter(1)
   }
 
   const openModel = () => {
     const state = useExperience.getState()
     state.setAutoTour(false)
-    state.setExplore(false)
-    state.clearFocus()
-    scrollToChapter(lastChapter)
-    window.setTimeout(() => {
-      if (useExperience.getState().activeChapter === lastChapter) {
-        useExperience.getState().setExplore(true)
-      }
-    }, 1750)
+    state.setProcessPlaying(false)
+    state.setExplore(true)
+    state.setPaused(false)
   }
 
   return (
     <header className="topbar">
       <div className="topbar__inner">
-        <button
-          type="button"
-          className="brand"
-          onClick={() => scrollToTop()}
-          aria-label="Every Drop Has a Story — go to the beginning"
-        >
+        <button type="button" className="brand" onClick={() => scrollToTop()} aria-label={copy.brandAria}>
           <span className="brand__mark" aria-hidden="true">
-            <Icon name="drop" size={22} />
+            <Icon name="drop" size={21} />
           </span>
           <span className="brand__copy">
-            <span className="brand__name">Every drop</span>
-            <span className="brand__meta">A 3D science exhibit</span>
+            <span className="brand__name">{copy.brandName}</span>
+            <span className="brand__meta">{copy.brandMeta}</span>
           </span>
         </button>
 
-        <nav className="topnav" aria-label="Primary navigation">
-          <button type="button" className="topnav__link" onClick={openStory}>
-            The story
+        <nav className="topnav" aria-label={copy.navStory}>
+          <button type="button" className="topnav__link" onClick={goToStory}>
+            {copy.navStory}
           </button>
           <button type="button" className="topnav__link" onClick={openModel}>
-            Inside the model
+            {copy.navInside}
           </button>
           <button type="button" className="topnav__link" onClick={() => setPanel('project')}>
-            The project
+            {copy.navProject}
           </button>
           <button type="button" className="topnav__link" onClick={() => setPanel('sources')}>
-            Science
+            {copy.navScience}
           </button>
         </nav>
 
         <div className="topbar__actions">
-          <span className="live-status" aria-label="Interactive model is running">
+          <span className="live-status" aria-label={`${copy.modelLive}: Ahmadi Begum, Class 7B`}>
             <span className="live-status__pulse" />
-            Model live
+            {copy.modelLive}
           </span>
-          {narrationSupported && (
+
+          <div className="language-toggle" role="group" aria-label={copy.languageLabel}>
             <button
               type="button"
-              className={`listen-button ${narrationOn ? 'is-on' : ''}`}
-              onClick={onToggleNarration}
-              aria-pressed={narrationOn}
-              aria-label={narrationOn ? 'Stop narration' : 'Listen to the story'}
+              className={language === 'en' ? 'is-active' : ''}
+              onClick={() => setLanguage('en')}
+              aria-pressed={language === 'en'}
+              lang="en"
             >
-              <Icon name={narrationOn ? 'sound' : 'sound-off'} size={16} />
-              <span>{narrationOn ? (speaking ? 'Narrating' : 'Narration') : 'Listen'}</span>
-              <span className={`listen-waves ${speaking ? 'is-speaking' : ''}`} aria-hidden="true">
-                <i />
-                <i />
-                <i />
-              </span>
+              EN
             </button>
-          )}
+            <span aria-hidden="true">/</span>
+            <button
+              type="button"
+              className={language === 'hi' ? 'is-active' : ''}
+              onClick={() => setLanguage('hi')}
+              aria-pressed={language === 'hi'}
+              lang="hi"
+            >
+              हिंदी
+            </button>
+          </div>
+
+          <button
+            type="button"
+            className={`listen-button ${voiceOn ? 'is-on' : ''}`}
+            onClick={onToggleVoice}
+            aria-pressed={voiceOn}
+            aria-label={voiceOn ? copy.muteVoice : copy.unmuteVoice}
+            data-tooltip={voiceOn ? copy.voiceOn : copy.voiceOff}
+          >
+            <Icon name={voiceOn ? 'sound' : 'sound-off'} size={16} />
+            <span className="listen-button__label">{voiceOn ? copy.voiceOn : copy.voiceOff}</span>
+          </button>
+
           <button
             type="button"
             className="chapters-button"
             onClick={() => setMenuOpen(true)}
-            aria-label={`Open chapter menu. Currently chapter ${activeChapter + 1} of ${CHAPTERS.length}.`}
+            aria-label={`${copy.openChapters}. ${copy.chapterWord} ${activeChapter + 1} / ${CHAPTERS.length}.`}
           >
             <span className="chapters-button__index mono">
               {String(activeChapter).padStart(2, '0')} — {String(lastChapter).padStart(2, '0')}
             </span>
-            <span className="chapters-button__label">Chapters</span>
+            <span className="chapters-button__label">{copy.chapters}</span>
             <Icon name="menu" size={16} />
           </button>
         </div>

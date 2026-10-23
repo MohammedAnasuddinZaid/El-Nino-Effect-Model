@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Billboard, Html, RoundedBox } from '@react-three/drei'
 import * as THREE from 'three'
-import { motionTime, useExperience } from '../store/useExperience'
+import { isMotionRunning, motionTime } from '../store/useExperience'
 
 export const COLORS = {
   ink: '#07111f',
@@ -74,7 +74,6 @@ export function FlowPipe({
   const innerMat = useRef<THREE.MeshBasicMaterial>(null)
   const dummy = useMemo(() => new THREE.Object3D(), [])
   const currentActive = useRef(active ? 1 : 0)
-  const paused = useExperience((s) => s.paused)
 
   useEffect(() => {
     return () => {
@@ -84,7 +83,8 @@ export function FlowPipe({
   }, [tubes])
 
   useFrame((_, dt) => {
-    const target = active ? 1 : 0
+    const running = isMotionRunning()
+    const target = active && running ? 1 : 0
     currentActive.current = damp(currentActive.current, target, 5, Math.min(dt, 0.05))
     if (outerMat.current) outerMat.current.opacity = 0.12 + currentActive.current * 0.2
     if (innerMat.current) innerMat.current.opacity = 0.08 + currentActive.current * 0.72
@@ -102,7 +102,7 @@ export function FlowPipe({
     }
     drops.current.instanceMatrix.needsUpdate = true
     const mat = drops.current.material as THREE.MeshBasicMaterial
-    mat.opacity = currentActive.current * (paused ? 0.5 : 1)
+    mat.opacity = currentActive.current
   })
 
   return (
@@ -280,17 +280,17 @@ export function RainSystem({
   )
   const dummy = useMemo(() => new THREE.Object3D(), [])
   const current = useRef(0)
-  const paused = useExperience((s) => s.paused)
 
   useFrame((_, dt) => {
-    current.current = damp(current.current, active ? 1 : 0, 3.5, Math.min(dt, 0.05))
+    const running = isMotionRunning()
+    current.current = damp(current.current, active && running ? 1 : 0, 3.5, Math.min(dt, 0.05))
     if (material.current) {
       material.current.opacity = current.current * 0.68
       material.current.color.set(tone === 'warm' ? '#ffd3a3' : '#8ddcff')
     }
     if (!drops.current) return
     drops.current.visible = current.current > 0.025
-    if (paused) return
+    if (!running) return
     const step = Math.min(dt, 0.05)
     for (let i = 0; i < count; i += 1) {
       const d = seeds[i]

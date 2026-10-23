@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { useFrame, type ThreeEvent } from '@react-three/fiber'
 import * as THREE from 'three'
 import { LAYOUT } from '../data/layout'
-import { motionTime, useExperience } from '../store/useExperience'
+import { isMotionRunning, useExperience } from '../store/useExperience'
 import { SceneLabel } from './primitives'
 
 export default function Pump() {
@@ -11,10 +11,9 @@ export default function Pump() {
   const selectPart = useExperience((s) => s.selectPart)
   const impeller = useRef<THREE.Group>(null)
   const active = activeChapter === 7 || activeChapter === 8
-  const paused = useExperience((s) => s.paused)
 
   useFrame((_, dt) => {
-    if (impeller.current && !paused) {
+    if (impeller.current && isMotionRunning()) {
       impeller.current.rotation.z += dt * (active ? 10 : 0.25)
     }
   })

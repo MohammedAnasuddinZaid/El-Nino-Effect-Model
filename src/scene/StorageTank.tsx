@@ -2,7 +2,7 @@ import { useMemo, useRef } from 'react'
 import { useFrame, type ThreeEvent } from '@react-three/fiber'
 import * as THREE from 'three'
 import { LAYOUT } from '../data/layout'
-import { scrollSignals, motionTime, useExperience } from '../store/useExperience'
+import { isMotionRunning, scrollSignals, motionTime, useExperience } from '../store/useExperience'
 import { Plaque, SceneLabel, damp, smoothstep } from './primitives'
 
 function TankBubbles({ active }: { active: boolean }) {
@@ -22,10 +22,12 @@ function TankBubbles({ active }: { active: boolean }) {
   )
   const current = useRef(0)
   useFrame((_, dt) => {
-    current.current = damp(current.current, active ? 1 : 0, 2.5, Math.min(dt, 0.05))
+    const running = isMotionRunning()
+    current.current = damp(current.current, active && running ? 1 : 0, 2.5, Math.min(dt, 0.05))
     if (material.current) material.current.opacity = current.current * 0.5
     if (!mesh.current) return
     mesh.current.visible = current.current > 0.02
+    if (!running) return
     for (let i = 0; i < seeds.length; i += 1) {
       const s = seeds[i]
       s.y += s.speed * Math.min(dt, 0.05)
