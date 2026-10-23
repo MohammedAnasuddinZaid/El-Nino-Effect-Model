@@ -205,6 +205,7 @@ export default function Filter() {
   const autoTour = useExperience((s) => s.autoTour)
   const processPlaying = useExperience((s) => s.processPlaying)
   const paused = useExperience((s) => s.paused)
+  const motionDemo = useExperience((s) => s.motionDemo)
   const language = useExperience((s) => s.language)
   const copy = getUiCopy(language)
   const active = activeChapter >= 4 && activeChapter <= 8
@@ -396,8 +397,8 @@ export default function Filter() {
           ))}
         </group>
 
-        <FilterDrops active={filterOpen || (playback && active)} />
-        <OutletDrops active={filterOpen || (playback && active)} />
+        <FilterDrops active={filterOpen || (playback && active) || motionDemo} />
+        <OutletDrops active={filterOpen || (playback && active) || motionDemo} />
       </group>
 
       <SceneLabel

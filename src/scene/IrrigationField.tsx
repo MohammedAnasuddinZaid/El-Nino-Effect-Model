@@ -229,8 +229,9 @@ export default function IrrigationField() {
   const activeChapter = useExperience((s) => s.activeChapter)
   const labelsOn = useExperience((s) => s.labels)
   const selectPart = useExperience((s) => s.selectPart)
+  const motionDemo = useExperience((s) => s.motionDemo)
   const dry = activeChapter === 3 || activeChapter === 2
-  const irrigating = activeChapter === 7 || activeChapter === 8
+  const irrigating = activeChapter === 7 || activeChapter === 8 || motionDemo
   const plantZ = LAYOUT.field.rows
   const plantXs = [-2.45, -1.2, 0.05, 1.3, 2.55]
 

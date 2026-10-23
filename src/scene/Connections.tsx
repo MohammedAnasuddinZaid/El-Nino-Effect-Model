@@ -44,8 +44,9 @@ export default function Connections() {
   const activeChapter = useExperience((s) => s.activeChapter)
   const selectPart = useExperience((s) => s.selectPart)
   const labelsOn = useExperience((s) => s.labels)
-  const collected = activeChapter === 4 || activeChapter === 5 || activeChapter === 6 || activeChapter === 8
-  const irrigating = activeChapter === 7 || activeChapter === 8
+  const motionDemo = useExperience((s) => s.motionDemo)
+  const collected = activeChapter === 4 || activeChapter === 5 || activeChapter === 6 || activeChapter === 8 || motionDemo
+  const irrigating = activeChapter === 7 || activeChapter === 8 || motionDemo
   const showLabels = labelsOn && activeChapter === 8
 
   const mainPath = useMemo(
@@ -84,7 +85,7 @@ export default function Connections() {
 
       {/* filter to tank */}
       <group onPointerDown={onFilter} onPointerOver={() => (document.body.style.cursor = 'pointer')} onPointerOut={() => (document.body.style.cursor = '')}>
-        <FlowPipe points={PIPE_ROUTES.filterToTank} radius={0.078} active={activeChapter === 5 || activeChapter === 6 || activeChapter === 8} speed={0.46} particles={10} color="#61d6fb" />
+        <FlowPipe points={PIPE_ROUTES.filterToTank} radius={0.078} active={activeChapter === 5 || activeChapter === 6 || activeChapter === 8 || motionDemo} speed={0.46} particles={10} color="#61d6fb" />
       </group>
 
       {/* tank to pump */}
@@ -117,7 +118,7 @@ export default function Connections() {
 
       {/* a short gutter water connection */}
       <group onPointerDown={onGutter}>
-        <FlowPipe points={PIPE_ROUTES.roofToGutter} radius={0.02} active={activeChapter === 4 || activeChapter === 5} speed={0.7} particles={10} color="#9a7a55" />
+        <FlowPipe points={PIPE_ROUTES.roofToGutter} radius={0.02} active={activeChapter === 4 || activeChapter === 5 || motionDemo} speed={0.7} particles={10} color="#9a7a55" />
       </group>
 
       {/* fittings */}
