@@ -25,9 +25,11 @@ export function CameraRig() {
   const focusPart = useExperience((state) => state.focusPart)
   const reducedMotion = useExperience((state) => state.reducedMotion)
   const paused = useExperience((state) => state.paused)
+  const presenting = useExperience((state) => state.autoTour || state.processPlaying)
 
   const lookTarget = useRef(new THREE.Vector3(...CHAPTERS[0].camera.start.target))
   const flight = useRef<Flight | null>(null)
+  const manualOrbitUntil = useRef(0)
   const lastViewShift = useRef(0)
   const lastViewShiftY = useRef(0)
   const lastChapter = useRef(-1)
@@ -80,12 +82,12 @@ export function CameraRig() {
       lastViewShift.current = 0
       lastViewShiftY.current = 0
       if (controls.current) {
-        controls.current.enabled = size.width >= 900
+        controls.current.enabled = size.width >= 900 || presenting
         if (controls.current.target) lookTarget.current.copy(controls.current.target)
       }
       flight.current = null
     }
-  }, [camera, explore, size.width])
+  }, [camera, explore, presenting, size.width])
 
   useEffect(() => {
     const onContextMenu = () => {
@@ -171,6 +173,13 @@ export function CameraRig() {
       return
     }
 
+    if (Date.now() < manualOrbitUntil.current) {
+      // The visitor is (or just was) orbiting freely — keep their view and let
+      // the narration keep playing instead of fighting for the camera.
+      controls.current?.update()
+      return
+    }
+
     const chapterIndex = Math.min(CHAPTERS.length - 1, scrollSignals.chapter)
     const chapter = CHAPTERS[chapterIndex]
     const local = Math.min(1, Math.max(0, scrollSignals.local))
@@ -249,7 +258,7 @@ export function CameraRig() {
     <OrbitControls
       ref={controls}
       makeDefault
-      enabled={explore || size.width >= 900}
+      enabled={explore || size.width >= 900 || presenting}
       enableDamping
       dampingFactor={0.075}
       rotateSpeed={0.55}
@@ -263,8 +272,11 @@ export function CameraRig() {
       maxPolarAngle={Math.PI * 0.475}
       target={[0, 1.4, 0]}
       onStart={() => {
-        if (size.width < 900) return
+        manualOrbitUntil.current = Date.now() + 2400
         const state = useExperience.getState()
+        const presentingNow = state.autoTour || state.processPlaying
+        if (presentingNow) return
+        if (size.width < 900) return
         if (!state.explore) {
           state.setExplore(true)
           state.setAutoTour(false)

@@ -250,7 +250,7 @@ function SelectionBeacon() {
   )
 }
 
-function SceneContents({ onReady }: { onReady: () => void }) {
+function SceneContents({ onReady, enablePost }: { onReady: () => void; enablePost: boolean }) {
   return (
     <>
       <TimeDriver />
@@ -268,10 +268,12 @@ function SceneContents({ onReady }: { onReady: () => void }) {
       <IrrigationField />
       <Connections />
       <SelectionBeacon />
-      <EffectComposer multisampling={2} enableNormalPass={false}>
-        <Bloom intensity={0.32} luminanceThreshold={0.78} luminanceSmoothing={0.2} mipmapBlur radius={0.72} />
-        <Vignette eskil={false} offset={0.17} darkness={0.58} />
-      </EffectComposer>
+      {enablePost ? (
+        <EffectComposer multisampling={0} enableNormalPass={false}>
+          <Bloom intensity={0.32} luminanceThreshold={0.78} luminanceSmoothing={0.2} mipmapBlur radius={0.72} />
+          <Vignette eskil={false} offset={0.17} darkness={0.58} />
+        </EffectComposer>
+      ) : null}
     </>
   )
 }
@@ -294,6 +296,8 @@ export function ExperienceCanvas({ onReady }: { onReady: () => void }) {
   const setLoaded = useExperience((state) => state.setLoaded)
   const selectPart = useExperience((state) => state.selectPart)
 
+  const narrow = typeof window !== 'undefined' && window.innerWidth < 820
+
   useEffect(() => {
     const failSafe = window.setTimeout(() => setLoaded(true), 8500)
     return () => window.clearTimeout(failSafe)
@@ -302,16 +306,16 @@ export function ExperienceCanvas({ onReady }: { onReady: () => void }) {
   return (
     <div className="canvas-shell" aria-hidden="true">
       <Canvas
-        dpr={[1, Math.min(1.8, typeof window === 'undefined' ? 1.5 : window.devicePixelRatio)]}
+        dpr={[1, narrow ? 1 : 1.5]}
         camera={{ position: CHAPTERS[0].camera.start.position, fov: 34, near: 0.08, far: 180 }}
         gl={{
-          antialias: true,
+          antialias: !narrow,
           alpha: false,
           powerPreference: 'high-performance',
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.05,
         }}
-        shadows="percentage"
+        shadows={narrow ? false : 'percentage'}
         onCreated={({ gl, scene }) => {
           gl.setClearColor('#100904', 1)
           scene.background = new THREE.Color('#100904')
@@ -319,7 +323,7 @@ export function ExperienceCanvas({ onReady }: { onReady: () => void }) {
         onPointerMissed={() => selectPart(null)}
       >
         <Suspense fallback={null}>
-          <SceneContents onReady={onReady} />
+          <SceneContents onReady={onReady} enablePost={!(narrow)} />
           <CanvasEvents />
         </Suspense>
       </Canvas>

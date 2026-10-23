@@ -1810,10 +1810,62 @@ body {
   }
 }
 
-/* Short screens: let the stage scroll instead of clipping. */
-@media (max-height: 760px) {
-  .story-stage {
-    align-items: flex-start;
+/* --- mobile reading surface: scrollable, never covers the whole model --- */
+
+@media (max-width: 980px) {
+  .hero-panel,
+  .chapter-panel,
+  .chapter-panel--finale {
+    max-height: 46vh;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    scrollbar-width: none;
+  }
+
+  .hero-panel::-webkit-scrollbar,
+  .chapter-panel::-webkit-scrollbar,
+  .chapter-panel--finale::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chapter-panel__content {
+    padding-bottom: 16px;
+  }
+
+  .hero-title {
+    font-size: clamp(2.3rem, 9vw, 3.4rem);
+  }
+
+  .chapter-title {
+    font-size: clamp(1.5rem, 6vw, 2.1rem);
+  }
+
+  .chapter-body {
+    font-size: 0.88rem;
+    line-height: 1.62;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-panel,
+  .chapter-panel,
+  .chapter-panel--finale {
+    max-height: 40vh;
+    border-radius: 14px;
+  }
+
+  .chapter-panel__content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .chapter-metrics {
+    gap: 8px;
+  }
+
+  .metric-card {
+    padding: 8px 10px;
   }
 }

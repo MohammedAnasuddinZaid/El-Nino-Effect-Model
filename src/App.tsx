@@ -194,12 +194,8 @@ export default function App() {
       if (target?.tagName.toLowerCase() === 'input' || target?.isContentEditable) return
       stop()
     }
-    window.addEventListener('wheel', stop, { passive: true })
-    window.addEventListener('touchstart', stop, { passive: true })
     window.addEventListener('keydown', stopOnKey)
     return () => {
-      window.removeEventListener('wheel', stop)
-      window.removeEventListener('touchstart', stop)
       window.removeEventListener('keydown', stopOnKey)
     }
   }, [autoTour, processPlaying])

@@ -129,6 +129,7 @@ export function useNarration({
   const cancelFadeRef = useRef<(() => void) | null>(null)
   const onEndRef = useRef(onEnd)
   const enabledRef = useRef(enabled)
+  const lastSrcRef = useRef<string | null>(null)
 
   useEffect(() => {
     onEndRef.current = onEnd
@@ -273,7 +274,8 @@ export function useNarration({
     }
 
     const audio = getAudio(src)
-    audio.volume = 0.62
+    const sameChapter = lastSrcRef.current === src
+    audio.volume = sameChapter ? Math.max(audio.volume, 0.72) : 0.62
     audioRef.current = audio
     let failed = false
     const fail = () => {
@@ -296,7 +298,13 @@ export function useNarration({
     const start = () => {
       if (token !== tokenRef.current || !enabledRef.current) return
       setSpeaking(true)
-      audio.currentTime = 0
+      // Resume from where we left off when the same chapter is played again
+      // (e.g. after a pause). Only reset to the start on a chapter change.
+      const sameChapter = lastSrcRef.current === src
+      if (!sameChapter || audio.currentTime >= Math.max(0, audio.duration - 0.25)) {
+        audio.currentTime = 0
+      }
+      lastSrcRef.current = src ?? null
       void audio
         .play()
         .then(() => {
