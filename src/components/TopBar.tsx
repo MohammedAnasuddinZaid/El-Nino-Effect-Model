@@ -16,6 +16,8 @@ export function TopBar({ onToggleVoice }: TopBarProps) {
   const language = useExperience((state) => state.language)
   const setLanguage = useExperience((state) => state.setLanguage)
   const voiceOn = useExperience((state) => state.voiceOn)
+  const hideSideText = useExperience((state) => state.hideSideText)
+  const setHideSideText = useExperience((state) => state.setHideSideText)
   const copy = getUiCopy(language)
   const lastChapter = CHAPTERS.length - 1
 
@@ -105,6 +107,17 @@ export function TopBar({ onToggleVoice }: TopBarProps) {
           </button>
 
           <InstallControl />
+
+          <button
+            type="button"
+            className={`listen-button ${hideSideText ? 'is-on' : ''}`}
+            onClick={() => setHideSideText(!hideSideText)}
+            aria-pressed={hideSideText}
+            aria-label={hideSideText ? copy.showSideText : copy.hideSideText}
+            data-tooltip={hideSideText ? copy.showSideText : copy.hideSideText}
+          >
+            <Icon name="captions" size={16} />
+          </button>
 
           <button
             type="button"

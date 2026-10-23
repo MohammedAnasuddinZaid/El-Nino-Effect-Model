@@ -1889,3 +1889,11 @@ body {
 .inspector {
   overscroll-behavior: contain;
 }
+
+/* Hide the side story text on demand (handy while presenting). */
+.app.is-text-hidden .story-layer {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-12px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}

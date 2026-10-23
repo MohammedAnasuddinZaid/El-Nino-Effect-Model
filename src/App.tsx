@@ -53,6 +53,7 @@ export default function App() {
   const explore = useExperience((state) => state.explore)
   const language = useExperience((state) => state.language)
   const voiceOn = useExperience((state) => state.voiceOn)
+  const hideSideText = useExperience((state) => state.hideSideText)
   const setLoaded = useExperience((state) => state.setLoaded)
   const setReducedMotion = useExperience((state) => state.setReducedMotion)
   const setAutoTour = useExperience((state) => state.setAutoTour)
@@ -199,6 +200,15 @@ export default function App() {
       window.removeEventListener('keydown', stopOnKey)
     }
   }, [autoTour, processPlaying])
+
+  // Auto-open the filter while the filtration chapter is being presented.
+  useEffect(() => {
+    const presenting = autoTour || processPlaying
+    if (!presenting) return
+    const state = useExperience.getState()
+    if (activeChapter === 5) state.setFilterOpen(true)
+    else state.setFilterOpen(false)
+  }, [activeChapter, autoTour, processPlaying])
 
   useEffect(() => {
     if (previousChapter.current === activeChapter) return
@@ -406,7 +416,7 @@ export default function App() {
         paused ? 'is-paused' : ''
       } ${autoTour ? 'is-presenting' : ''} ${processPlaying ? 'is-step-playing' : ''} ${
         webglAvailable ? '' : 'is-fallback'
-      }`}
+      } ${hideSideText ? 'is-text-hidden' : ''}`}
       data-language={language}
     >
       <div className={`canvas-stack ${webglAvailable ? '' : 'canvas-stack--fallback'}`}>
