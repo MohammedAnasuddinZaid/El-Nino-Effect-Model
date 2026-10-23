@@ -1,8 +1,8 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
+import { getDossierUi } from '../data/dossierContent'
 import { useExperience } from '../store/useExperience'
 import { Icon } from './Icons'
 import { Modal } from './Modal'
-import { useState } from 'react'
 
 type FieldProps = {
   id: string
@@ -48,6 +48,8 @@ function RangeField({ id, label, unit, min, max, step, value, display, onChange 
 export function HarvestCalculator() {
   const panel = useExperience((state) => state.panel)
   const setPanel = useExperience((state) => state.setPanel)
+  const language = useExperience((state) => state.language)
+  const t = getDossierUi(language).calculator
   const open = panel === 'calculator'
   const [roofArea, setRoofArea] = useState(40)
   const [rainfall, setRainfall] = useState(50)
@@ -72,28 +74,25 @@ export function HarvestCalculator() {
   const close = () => setPanel(null)
 
   return (
-    <Modal open={open} onClose={close} label="Rooftop harvest estimator" className="calculator-modal">
+    <Modal open={open} onClose={close} label={t.label} className="calculator-modal">
       <header className="calculator-head">
         <span className="eyebrow">
           <span className="eyebrow__dot" />
-          Interactive planning tool
+          {t.eyebrow}
         </span>
-        <h2>A harvest estimate.</h2>
-        <p>
-          Use one rainfall event to see how roof area, runoff and tank size shape what you can keep. This is a
-          simplified estimate — not a measurement or a guarantee.
-        </p>
+        <h2>{t.heading}</h2>
+        <p>{t.lede}</p>
       </header>
 
       <div className="calculator-grid">
         <div className="calculator-form">
           <div className="calculator-form__intro">
-            <span className="mono">Your inputs</span>
-            <span className="mono">Metric</span>
+            <span className="mono">{t.inputs}</span>
+            <span className="mono">{t.metric}</span>
           </div>
           <RangeField
             id="roof-area"
-            label="Catchment area"
+            label={t.roofArea}
             unit="m²"
             min={5}
             max={200}
@@ -104,7 +103,7 @@ export function HarvestCalculator() {
           />
           <RangeField
             id="rainfall-depth"
-            label="Rainfall depth"
+            label={t.rainfall}
             unit="mm"
             min={5}
             max={300}
@@ -115,7 +114,7 @@ export function HarvestCalculator() {
           />
           <RangeField
             id="runoff-coefficient"
-            label="Runoff coefficient"
+            label={t.runoff}
             unit="%"
             min={0.4}
             max={1}
@@ -126,7 +125,7 @@ export function HarvestCalculator() {
           />
           <RangeField
             id="tank-capacity"
-            label="Storage capacity"
+            label={t.tankCapacity}
             unit="L"
             min={200}
             max={10000}
@@ -137,24 +136,22 @@ export function HarvestCalculator() {
           />
 
           <div className="calculator-formula">
-            <span className="mono">Estimate formula</span>
+            <span className="mono">{t.formulaLabel}</span>
             <p>
-              Area × rainfall × runoff coefficient
+              {t.formulaLine}
               <br />
-              <span>= harvest potential (litres)</span>
+              <span>{t.formulaResult}</span>
             </p>
-            <span className="mono calculator-formula__note">
-              1 mm of rain on 1 m² ≈ 1 litre before losses
-            </span>
+            <span className="mono calculator-formula__note">{t.formulaNote}</span>
           </div>
         </div>
 
         <div className="calculator-result">
           <div className="calculator-result__top">
-            <span className="mono">For this rain event</span>
+            <span className="mono">{t.eventLabel}</span>
             <span className="status-chip">
               <span />
-              Estimate
+              {t.estimate}
             </span>
           </div>
 
@@ -173,44 +170,41 @@ export function HarvestCalculator() {
               <span className="harvest-tank__percent mono">{Math.round(result.fill)}%</span>
             </div>
             <span className="harvest-tank__label mono">
-              Tank <br /> {tankCapacity.toLocaleString('en-IN')} L
+              {t.tank} <br /> {tankCapacity.toLocaleString('en-IN')} L
             </span>
           </div>
 
           <div className="harvest-total">
-            <span className="mono">Estimated harvest</span>
+            <span className="mono">{t.harvestLabel}</span>
             <strong>
               {result.harvest.toLocaleString('en-IN')}
               <span>L</span>
             </strong>
-            <p>Before first-flush diversion, evaporation, leakage and filtration losses.</p>
+            <p>{t.harvestNote}</p>
           </div>
 
           <div className="harvest-breakdown">
             <div>
-              <span className="mono">Gross rainfall on roof</span>
+              <span className="mono">{t.gross}</span>
               <strong>{result.gross.toLocaleString('en-IN')} L</strong>
             </div>
             <div>
-              <span className="mono">Can be stored</span>
+              <span className="mono">{t.storable}</span>
               <strong>{result.stored.toLocaleString('en-IN')} L</strong>
             </div>
             <div className={result.overflow > 0 ? 'is-warm' : ''}>
-              <span className="mono">Potential overflow</span>
+              <span className="mono">{t.overflow}</span>
               <strong>{result.overflow.toLocaleString('en-IN')} L</strong>
             </div>
           </div>
 
           <div className="calculator-caution">
             <Icon name="info" size={15} />
-            <p>
-              A full tank stops storing. Real systems need first-flush diversion, screening, a safe overflow and
-              maintenance. Rainwater intended for drinking needs suitable treatment and testing.
-            </p>
+            <p>{t.caution}</p>
           </div>
 
           <button type="button" className="text-link calculator-source" onClick={() => setPanel('sources')}>
-            Read the harvesting sources
+            {t.sourcesLink}
             <Icon name="arrow-right" size={13} />
           </button>
         </div>
