@@ -18,3 +18,13 @@ const root = document.getElementById('root')
 if (!root) throw new Error('Root element not found')
 
 createRoot(root).render(<App />)
+
+// Installable app: the offline shell is only registered for real builds so the
+// dev server is never shadowed by a stale cache.
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {
+      // Installing as an app is a bonus; the exhibit runs fine without it.
+    })
+  })
+}

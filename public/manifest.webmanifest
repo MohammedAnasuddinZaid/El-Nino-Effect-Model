@@ -1,0 +1,42 @@
+{
+  "name": "Every Drop Has a Story — El Niño & Water Conservation",
+  "short_name": "Every Drop",
+  "description": "Ahmadi Begum's Class 7B interactive 3D exhibit: El Niño, rooftop rainwater harvesting, filtration, storage and drip irrigation in one connected model.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#100904",
+  "theme_color": "#100904",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["education", "science", "kids"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

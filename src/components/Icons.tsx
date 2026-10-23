@@ -10,6 +10,7 @@ export type IconName =
   | 'chevron-down'
   | 'close'
   | 'cutaway'
+  | 'download'
   | 'drop'
   | 'expand'
   | 'explore'
@@ -71,6 +72,13 @@ const paths: Record<IconName, React.ReactNode> = {
       <path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5v-9Z" />
       <path d="M4 7.5 12 12l8-4.5M12 12v9" />
       <path d="m8 5.2 8 4.5" strokeDasharray="2 3" />
+    </>
+  ),
+  download: (
+    <>
+      <path d="M12 3v11" />
+      <path d="m7.5 9.5 4.5 4.5 4.5-4.5" />
+      <path d="M4.5 17.5v1.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-1.5" />
     </>
   ),
   drop: (

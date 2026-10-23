@@ -4,7 +4,7 @@ import { chapterAudioPath, getUiCopy } from './data/i18n'
 import { detectWebGL } from './lib/webgl'
 import { getLenis, lockScroll, scrollToChapter, scrollToTop, unlockScroll } from './lib/scroll'
 import { useScrollExperience } from './hooks/useScrollExperience'
-import { useNarration } from './hooks/useNarration'
+import { preloadNarration, useNarration } from './hooks/useNarration'
 import { scrollSignals, useExperience } from './store/useExperience'
 import { ExperienceCanvas } from './components/ExperienceCanvas'
 import { FallbackExhibit } from './components/FallbackExhibit'
@@ -90,11 +90,19 @@ export default function App() {
 
   const narration = useNarration({
     src: chapterAudioPath(language, activeChapter),
+    preloadSrc: chapterAudioPath(language, Math.min(activeChapter + 1, lastChapter)),
     fallbackText: chapter.narration,
     language,
     enabled: voiceOn && (autoTour || processPlaying),
     onEnd: handleNarrationEnd,
   })
+
+  // Warm the first chapters quietly while the visitor reads the opening screen.
+  useEffect(() => {
+    if (!loaded) return
+    preloadNarration(chapterAudioPath(language, 1))
+    preloadNarration(chapterAudioPath(language, 2))
+  }, [language, loaded])
 
   useEffect(() => {
     if (typeof window === 'undefined') return

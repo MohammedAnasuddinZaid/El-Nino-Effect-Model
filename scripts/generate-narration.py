@@ -3,11 +3,17 @@
 Usage:
     py -3.10 -m pip install edge-tts
     py -3.10 scripts/generate-narration.py
+
+The render step is followed by scripts/smooth-narration.py, which tightens the
+long silence Edge leaves between sentences so the voice flows instead of
+stopping after every line.
 """
 
 from __future__ import annotations
 
 import asyncio
+import subprocess
+import sys
 from pathlib import Path
 
 import edge_tts
@@ -50,9 +56,18 @@ async def render(lines: list[str], voice: str, language: str, rate: str) -> None
         print(f"{language} {index:02d} -> {path.name} ({path.stat().st_size:,} bytes)")
 
 
+def smooth() -> None:
+    script = Path(__file__).resolve().parent / "smooth-narration.py"
+    if not script.exists():
+        return
+    print("\nSmoothing narration…")
+    subprocess.run([sys.executable, str(script)], check=False)
+
+
 async def main() -> None:
     await render(EN, EN_VOICE, "en", "-5%")
     await render(HI, HI_VOICE, "hi", "-6%")
+    smooth()
 
 
 if __name__ == "__main__":

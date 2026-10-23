@@ -3,6 +3,7 @@ import { getUiCopy } from '../data/i18n'
 import { scrollToChapter, scrollToTop } from '../lib/scroll'
 import { useExperience } from '../store/useExperience'
 import { Icon } from './Icons'
+import { InstallControl } from './InstallControl'
 
 type TopBarProps = {
   onToggleVoice: () => void
@@ -102,6 +103,8 @@ export function TopBar({ onToggleVoice }: TopBarProps) {
             <Icon name={voiceOn ? 'sound' : 'sound-off'} size={16} />
             <span className="listen-button__label">{voiceOn ? copy.voiceOn : copy.voiceOff}</span>
           </button>
+
+          <InstallControl />
 
           <button
             type="button"

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+# No crawlable sub-pages: the exhibit is a single interactive page.

@@ -19,7 +19,7 @@ type Flight = {
 }
 
 export function CameraRig() {
-  const { camera, size } = useThree()
+  const { camera, size, gl } = useThree()
   const controls = useRef<OrbitControlsImpl>(null)
   const explore = useExperience((state) => state.explore)
   const focusPart = useExperience((state) => state.focusPart)
@@ -94,6 +94,17 @@ export function CameraRig() {
     window.addEventListener('contextmenu', onContextMenu)
     return () => window.removeEventListener('contextmenu', onContextMenu)
   }, [])
+
+  // On a phone or a small tablet, a vertical swipe over the model must scroll the
+  // story. Only hand the whole gesture surface to the camera once we are orbiting.
+  useEffect(() => {
+    const canvas = gl.domElement
+    const orbits = explore || size.width >= 900
+    canvas.style.touchAction = orbits ? 'none' : 'pan-y'
+    return () => {
+      canvas.style.touchAction = ''
+    }
+  }, [explore, gl, size.width])
 
   useEffect(() => {
     if (!import.meta.env.DEV) return
