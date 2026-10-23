@@ -322,7 +322,7 @@ function Hero({ onStartTour, onExplore }: { onStartTour: () => void; onExplore: 
 
       <p className="hero-kicker">Ahmadi Begum · Class 7B</p>
       <h1 id="hero-title" className="hero-title">
-        <span>{copy.heroTitleTop}</span>
+        <span>{copy.heroTitleTop}</span>{' '}
         <span className="hero-title__accent">{copy.heroTitleAccent}</span>
       </h1>
 
@@ -398,15 +398,15 @@ export function StoryLayer({ onStartTour, onReplay, onToggleStep, onExplore }: S
       </div>
 
       <div className="story-stage">
-        <AnimatePresence mode="wait" initial={false}>
+        <AnimatePresence mode="popLayout" initial={false}>
           {isHero ? (
             <motion.div
               key="hero"
               className="story-transition"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
             >
               <Hero onStartTour={onStartTour} onExplore={onExplore} />
             </motion.div>
@@ -414,10 +414,10 @@ export function StoryLayer({ onStartTour, onReplay, onToggleStep, onExplore }: S
             <motion.div
               key={chapter.id}
               className="story-transition"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
             >
               <ChapterPanel
                 chapter={chapter}

@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
+import { getUiCopy } from '../data/i18n'
 import { useExperience } from '../store/useExperience'
 
 export function Loader() {
   const loaded = useExperience((state) => state.loaded)
+  const language = useExperience((state) => state.language)
+  const copy = getUiCopy(language)
   const [visible, setVisible] = useState(true)
 
   useEffect(() => {
@@ -26,8 +29,8 @@ export function Loader() {
         >
           <div className="loading-screen__grid" aria-hidden="true" />
           <div className="loading-screen__top mono">
-            <span>Every Drop Has a Story</span>
-            <span>Class 7B · 2026</span>
+            <span>{copy.fallbackTitle}</span>
+            <span>{copy.credit}</span>
           </div>
           <div className="loading-screen__center">
             <div className="loading-mark" aria-hidden="true">
@@ -42,8 +45,8 @@ export function Loader() {
                 <path d="M17.5 30.5a6.5 6.5 0 0 0 6 6" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" />
               </svg>
             </div>
-            <span className="loading-screen__title">Preparing the exhibit</span>
-            <span className="loading-screen__sub mono">Building the 3D water model</span>
+            <span className="loading-screen__title">{copy.loadingTitle}</span>
+            <span className="loading-screen__sub mono">{copy.loadingSub}</span>
             <div className="loading-line">
               <motion.span
                 initial={{ scaleX: 0.08 }}
@@ -53,8 +56,8 @@ export function Loader() {
             </div>
           </div>
           <div className="loading-screen__foot mono">
-            <span>Ahmadi Begum</span>
-            <span>El Niño · Rainwater Harvesting · Drip Irrigation</span>
+            <span>{copy.credit}</span>
+            <span>{copy.loadingFoot}</span>
           </div>
         </motion.div>
       )}

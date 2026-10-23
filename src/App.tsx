@@ -75,7 +75,14 @@ export default function App() {
         state.setPaused(false)
         return
       }
-      scrollToChapter(state.activeChapter + 1)
+      const next = state.activeChapter + 1
+      // Jump the document, then let the camera damp into the next pose.
+      // This keeps the chapter change clean instead of scrolling through every
+      // intermediate scroll position while the voice is already moving on.
+      state.setActiveChapter(next)
+      scrollSignals.chapter = next
+      scrollSignals.local = 0
+      scrollToChapter(next, true)
       return
     }
     if (state.processPlaying) state.setProcessPlaying(false)

@@ -19,18 +19,47 @@ npm run build       # production build in dist/
 npm run preview     # preview the production build
 ```
 
+### Narration assets
+
+Narration is pre-generated so the voice is smooth and identical on every device.
+
+```bash
+py -3.10 -m pip install edge-tts
+py -3.10 scripts/generate-narration.py
+```
+
+The script writes `public/audio/en/00.mp3`–`08.mp3` with `en-IN-NeerjaExpressiveNeural`
+and `public/audio/hi/00.mp3`–`08.mp3` with `hi-IN-SwaraNeural`. If a file is missing,
+the hook falls back to the browser speech synthesiser.
+
+## Presentation model
+
+The exhibit is deliberately quiet until the visitor asks for the story.
+
+- **Free exploration never plays the story and never advances the water.** Drag to orbit,
+  scroll to zoom, and select any part. Page scrolling is locked while exploring.
+- **Present the story** starts the full narration-led chapter sequence.
+- **Play this part** inside a chapter runs only that chapter's process (rain, flow,
+  filtration, storage, or drip) and stops itself.
+- Camera drift, rain, pipe particles, tank bubbles, the pump impeller, and dripper drops
+  are all gated so nothing flows while the camera or page is moving.
+
 ## Controls
 
 | Action | Input |
 | --- | --- |
-| Follow the story | Scroll, or press **Play** |
-| Move between chapters | **← / →**, prev/next buttons, or the chapter index |
+| Present the whole story | **Present the story** on the opening panel, or **Present** in the dock |
+| Follow the story | Scroll, or let the presentation advance |
+| Move between chapters | **← / →**, prev/next buttons, or the chapter menu |
 | Pause / resume | **Space** or the play button |
+| Play one process | **Play this part** in the chapter panel |
 | Inspect a system | Select a labelled part in the 3D model |
+| Open the filter internals | **Open the filter**, then pick any of the six layers |
 | Orbit and zoom freely | **Explore the model**, then drag / scroll |
 | Close a panel | **Esc** |
-| Listen | **Listen** in the top bar (browser narration) |
-| Replay | Replay button in the chapter index or final panel |
+| Switch language | **EN / हिंदी** in the top bar |
+| Narration on / off | Speaker button in the top bar |
+| Replay | Replay in the chapter menu or final panel |
 
 ## What is modelled
 
@@ -56,15 +85,16 @@ Sources and project notes are available inside the site under **Science** and **
 
 ## Stack
 
-React 19 · TypeScript · Vite · React Three Fiber · Drei · Three.js · Zustand · Lenis · Motion · postprocessing. All geometry, textures, and labels are generated in code; no external 3D assets are downloaded.
+React 19 · TypeScript · Vite · React Three Fiber · Drei · Three.js · Zustand · Lenis · Motion · postprocessing. All geometry, textures, and labels are generated in code; no external 3D assets are downloaded. Type is set in Fraunces, Manrope, Noto Sans Devanagari, and JetBrains Mono via Fontsource (SIL Open Font License).
 
 ## Accessibility and performance
 
 - Keyboard chapter navigation, visible focus, focus trapping in dialogs, and `Esc` to close.
 - Reduced-motion preference is respected; camera flights and ambient motion settle immediately.
 - A 2D schematic fallback appears when WebGL is unavailable.
-- Captions are available for every chapter; browser narration is optional.
+- Captions are available for every chapter; narration can be muted independently.
 - The 3D scene is aria-hidden, while the story is duplicated in accessible page sections.
+- The interface is available in English and Hindi, including component names, filter layers, and captions.
 
 ## Deploy on Vercel
 

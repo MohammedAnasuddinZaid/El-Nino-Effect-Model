@@ -1,9 +1,12 @@
+import { getUiCopy } from '../data/i18n'
 import { useExperience } from '../store/useExperience'
 import { Icon } from './Icons'
 
 export function FallbackExhibit() {
   const activeChapter = useExperience((state) => state.activeChapter)
   const setPanel = useExperience((state) => state.setPanel)
+  const language = useExperience((state) => state.language)
+  const copy = getUiCopy(language)
 
   return (
     <div className="fallback-exhibit">
@@ -105,14 +108,11 @@ export function FallbackExhibit() {
           <Icon name="info" size={17} />
         </span>
         <div>
-          <strong>The interactive 3D model could not start in this browser.</strong>
-          <p>
-            A schematic view is shown instead. Every chapter, worksheet and source remains available. For the full
-            experience, use a browser with WebGL enabled.
-          </p>
+          <strong>{copy.fallbackStrong}</strong>
+          <p>{copy.fallbackDetail}</p>
         </div>
         <button type="button" className="text-link" onClick={() => setPanel('project')}>
-          Project notes
+          {copy.projectNotes}
           <Icon name="arrow-right" size={13} />
         </button>
       </div>

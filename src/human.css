@@ -266,6 +266,20 @@ body {
 
 /* --- the fixed editorial layer ------------------------------------------- */
 
+.story-stage {
+  align-items: center;
+}
+
+.story-transition {
+  transform-origin: 12% 50%;
+  will-change: opacity, transform;
+}
+
+.chapter-panel--right + .story-transition,
+.chapter-panel--center + .story-transition {
+  transform-origin: 88% 50%;
+}
+
 .story-layer {
   padding: var(--topbar-h) var(--gutter) calc(var(--dock-h) + 52px);
 }
@@ -980,6 +994,19 @@ body {
 .dock-readout__mode {
   color: var(--paper-dim);
   font-size: 0.52rem;
+}
+
+/* smoother feel on touch devices */
+@media (hover: none) {
+  .button,
+  .inline-action,
+  .chapter-step,
+  .filter-layer,
+  .listen-button,
+  .chapters-button,
+  .language-toggle button {
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 .dock-readout__dot.is-live {

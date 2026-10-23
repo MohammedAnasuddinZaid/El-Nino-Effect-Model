@@ -148,6 +148,10 @@ const en = {
   fallbackTitle: 'Every Drop Has a Story',
   fallbackBody:
     'This exhibit needs WebGL for the full 3D model. You can still read the project story and the science below.',
+  fallbackStrong: 'The interactive 3D model could not start in this browser.',
+  fallbackDetail:
+    'A schematic view is shown instead. Every chapter, worksheet and source remains available. For the full experience, use a browser with WebGL enabled.',
+  projectNotes: 'Project notes',
   narrationUnsupported: 'Your browser does not support narration. The story text is still available.',
   stepNote: 'Only plays when you press it.',
 } as const
@@ -302,6 +306,10 @@ const hi: UiCopy = {
   fallbackTitle: 'हर बूँद की एक कहानी है',
   fallbackBody:
     'पूरे 3D मॉडल के लिए WebGL चाहिए। नीचे आप परियोजना की कहानी और विज्ञान पढ़ सकते हैं।',
+  fallbackStrong: 'इस ब्राउज़र में 3D मॉडल शुरू नहीं हो सका।',
+  fallbackDetail:
+    'इसकी जगह एक सरल चित्र दिखाया गया है। सभी अध्याय, वर्कशीट और स्रोत उपलब्ध हैं। पूरा अनुभव देखने के लिए WebGL वाला ब्राउज़र इस्तेमाल करें।',
+  projectNotes: 'परियोजना नोट्स',
   narrationUnsupported: 'आपका ब्राउज़र आवाज़ नहीं चला सकता। कहानी का पाठ नीचे उपलब्ध है।',
   stepNote: 'यह तभी चलेगा जब आप बटन दबाएँगे।',
 }
